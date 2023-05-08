@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "LabCharacter.generated.h"
 
+class UCameraComponent;
+class UInputAction;
+class UInputMappingContext;
+struct FInputActionValue;
+
 UCLASS()
 class LAB_API ALabCharacter : public ACharacter
 {
@@ -16,14 +21,31 @@ public:
 	ALabCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_LookMouse(const FInputActionValue& InputActionValue);
+	void Input_LookStick(const FInputActionValue& InputActionValue);
+
+	// Input:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UInputMappingContext> InputMappingContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UInputAction> IA_Move;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UInputAction> IA_LookMouse;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UInputAction> IA_LookStick;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "KLab|Character", Meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UCameraComponent> CameraComponent;
+
+	static const float LookYawRate;
+	static const float LookPitchRate;
 };
