@@ -75,6 +75,9 @@ void ALabCharacter::BeginPlay()
 		check(Texture);
 		CaptureCubeComp->TextureTarget = Texture;
 
+
+		CaptureCubeComp->ShowOnlyActorComponents(this);
+
 	}
 
 	SetActorTickEnabled(bNeedEnableTick);
@@ -90,21 +93,17 @@ void ALabCharacter::Tick(float DeltaTime)
 	FQuat MirrorRot = MirrorActor -> GetActorQuat();
 	FTransform MirrorTransform = MirrorActor->GetActorTransform();
 
+	// Rotation
 	FQuat VirtualMirrorSpaceQuat = MirrorTransform.Inverse().TransformRotation(CameraComponent->GetComponentRotation().Quaternion());
-
 	FRotator VirtualMirrorSpaceRot = VirtualMirrorSpaceQuat.Rotator();
-	UE_LOG(LogTemp, Warning, TEXT("VirtualMirrorSpaceRot is %f %f %f"), VirtualMirrorSpaceRot.Roll, VirtualMirrorSpaceRot.Pitch, VirtualMirrorSpaceRot.Yaw);
 	VirtualMirrorSpaceRot.Roll = 180 - VirtualMirrorSpaceRot.Roll;
 	VirtualMirrorSpaceRot.Pitch = -VirtualMirrorSpaceRot.Pitch;
 	VirtualMirrorSpaceRot.Yaw = VirtualMirrorSpaceRot.Yaw;
-	UE_LOG(LogTemp, Warning, TEXT("VirtualMirrorSpaceRot is %f %f %f"), VirtualMirrorSpaceRot.Roll, VirtualMirrorSpaceRot.Pitch, VirtualMirrorSpaceRot.Yaw);
-
 	FQuat VirtualWorldSpaceQuat = MirrorTransform.TransformRotation(VirtualMirrorSpaceRot.Quaternion());
 	FQuat VirtualRotation = VirtualWorldSpaceQuat;
 
-	//Virtual capture location and rotation
+	//Location
 	FVector MirrorNormal = MirrorRotation.Quaternion().RotateVector(FVector(0, 0, 1));
-	//UE_LOG(LogTemp, Warning, TEXT("MirrorNormal is %f %f %f"), MirrorNormal.X, MirrorNormal.Y, MirrorNormal.Z);
 	FVector RealCapOffset = MirrorLocation - CameraComponent->GetComponentLocation();
 	float RealDist = RealCapOffset.Length();
 	float ProjLength = RealCapOffset.Dot(MirrorNormal) * (-1.0);
@@ -112,27 +111,6 @@ void ALabCharacter::Tick(float DeltaTime)
 	FVector VirtualLocation = -SymmVec - MirrorNormal * ProjLength + MirrorLocation;
 
 	SceneCaptureCubeActor->SetActorLocationAndRotation(VirtualLocation, VirtualRotation.Rotator());
-
-	// Set Hidden
-	const FVector TraceStart = SceneCaptureCubeActor->GetActorLocation();
-	const FVector TraceEnd = MirrorActor->GetActorLocation();
-
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(this);
-	TArray<FHitResult> HitArray;
-	const bool Hit = UKismetSystemLibrary::LineTraceMulti(this, TraceStart, TraceEnd, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::Type::None, HitArray, true);
-
-	// Handle result
-	TArray<AActor*> ActorsToHide;
-	if (Hit)
-	{
-		for (const FHitResult& Result : HitArray)	
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Orange, FString::Printf(TEXT("Hit %s"), *Result.GetActor()->GetName()));
-			ActorsToHide.Add(Result.GetActor());
-		}
-	}
-	SceneCaptureCubeActor->GetCaptureComponentCube()->HiddenActors = ActorsToHide;
 }
 
 // Called to bind functionality to input
