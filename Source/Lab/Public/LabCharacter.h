@@ -10,6 +10,8 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
+class ASceneCaptureCube;
+class ALabMovableSceneCapMirror;
 
 UCLASS()
 class LAB_API ALabCharacter : public ACharacter
@@ -41,6 +43,9 @@ protected:
 		TObjectPtr<UInputAction> IA_LookMouse;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<UInputAction> IA_LookStick;
+
+	TObjectPtr<ALabMovableSceneCapMirror> MirrorActor;
+	TObjectPtr<ASceneCaptureCube> SceneCaptureCubeActor;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "KLab|Character", Meta = (AllowPrivateAccess = "true"))

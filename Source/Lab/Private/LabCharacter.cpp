@@ -8,18 +8,24 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Microsoft/AllowMicrosoftPlatformTypes.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "LabMovableSceneCapMirror.h"
+#include "Engine/SceneCaptureCube.h"
+#include "Components/SceneCaptureComponentCube.h"
+#include "Engine/TextureRenderTargetCube.h"
+#include "DrawDebugHelpers.h"
 
 const float ALabCharacter::LookYawRate = 300.0f;
 const float ALabCharacter::LookPitchRate = 165.0f;
 
-static FName NAME_LabCharacterCollisionProfile_Capsule(TEXT("LabCharacterCapsule"));
-static FName NAME_LabCharacterCollisionProfile_Mesh(TEXT("LabCharacterMesh"));
+static const FName NAME_LabCharacterCollisionProfile_Capsule(TEXT("LabCharacterCapsule"));
+static const FName NAME_LabCharacterCollisionProfile_Mesh(TEXT("LabCharacterMesh"));
+static const FString String_MovableCaptureCubeTargetPath_Texture = TEXT("/Script/Engine.TextureRenderTargetCube'/Game/MaterialLab/Mirror/CRT_MovableMirrorRenderTarget.CRT_MovableMirrorRenderTarget'");
 
 // Sets default values
 ALabCharacter::ALabCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
@@ -34,6 +40,7 @@ ALabCharacter::ALabCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetRelativeLocation(FVector(-300.0f, 0.0f, 75.0f));
+	CameraComponent->SetupAttachment(RootComponent);
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -44,7 +51,33 @@ ALabCharacter::ALabCharacter()
 void ALabCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	bool bNeedEnableTick = false;
+
+	AActor* Mirror = UGameplayStatics::GetActorOfClass(this, ALabMovableSceneCapMirror::StaticClass());
+	if (IsValid(Mirror))
+	{
+		// Save Mirror Ptr
+		MirrorActor = Cast<ALabMovableSceneCapMirror>(Mirror);
+		check(MirrorActor);
+		bNeedEnableTick = true;
+
+		// Spawn SceneCaptureCube
+
+		FTransform Transform = MirrorActor->GetActorTransform();
+		FActorSpawnParameters SpawnParams;
+		SceneCaptureCubeActor = GetWorld()->SpawnActor<ASceneCaptureCube>(ASceneCaptureCube::StaticClass(), Transform, SpawnParams);
+
+		// Bind Texture
+		USceneCaptureComponentCube* CaptureCubeComp = SceneCaptureCubeActor->GetCaptureComponentCube();
+
+		UTextureRenderTargetCube* Texture = Cast<UTextureRenderTargetCube>(StaticLoadObject(UTextureRenderTargetCube::StaticClass(), NULL, *(String_MovableCaptureCubeTargetPath_Texture)));
+		check(Texture);
+		CaptureCubeComp->TextureTarget = Texture;
+
+	}
+
+	SetActorTickEnabled(bNeedEnableTick);
 }
 
 // Called every frame
@@ -52,6 +85,54 @@ void ALabCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector MirrorLocation = MirrorActor->GetActorLocation();
+	FRotator MirrorRotation = MirrorActor->GetActorRotation();
+	FQuat MirrorRot = MirrorActor -> GetActorQuat();
+	FTransform MirrorTransform = MirrorActor->GetActorTransform();
+
+	FQuat VirtualMirrorSpaceQuat = MirrorTransform.Inverse().TransformRotation(CameraComponent->GetComponentRotation().Quaternion());
+
+	FRotator VirtualMirrorSpaceRot = VirtualMirrorSpaceQuat.Rotator();
+	UE_LOG(LogTemp, Warning, TEXT("VirtualMirrorSpaceRot is %f %f %f"), VirtualMirrorSpaceRot.Roll, VirtualMirrorSpaceRot.Pitch, VirtualMirrorSpaceRot.Yaw);
+	VirtualMirrorSpaceRot.Roll = 180 - VirtualMirrorSpaceRot.Roll;
+	VirtualMirrorSpaceRot.Pitch = -VirtualMirrorSpaceRot.Pitch;
+	VirtualMirrorSpaceRot.Yaw = VirtualMirrorSpaceRot.Yaw;
+	UE_LOG(LogTemp, Warning, TEXT("VirtualMirrorSpaceRot is %f %f %f"), VirtualMirrorSpaceRot.Roll, VirtualMirrorSpaceRot.Pitch, VirtualMirrorSpaceRot.Yaw);
+
+	FQuat VirtualWorldSpaceQuat = MirrorTransform.TransformRotation(VirtualMirrorSpaceRot.Quaternion());
+	FQuat VirtualRotation = VirtualWorldSpaceQuat;
+
+	//Virtual capture location and rotation
+	FVector MirrorNormal = MirrorRotation.Quaternion().RotateVector(FVector(0, 0, 1));
+	//UE_LOG(LogTemp, Warning, TEXT("MirrorNormal is %f %f %f"), MirrorNormal.X, MirrorNormal.Y, MirrorNormal.Z);
+	FVector RealCapOffset = MirrorLocation - CameraComponent->GetComponentLocation();
+	float RealDist = RealCapOffset.Length();
+	float ProjLength = RealCapOffset.Dot(MirrorNormal) * (-1.0);
+	FVector SymmVec = RealCapOffset + MirrorNormal * ProjLength;
+	FVector VirtualLocation = -SymmVec - MirrorNormal * ProjLength + MirrorLocation;
+
+	SceneCaptureCubeActor->SetActorLocationAndRotation(VirtualLocation, VirtualRotation.Rotator());
+
+	// Set Hidden
+	const FVector TraceStart = SceneCaptureCubeActor->GetActorLocation();
+	const FVector TraceEnd = MirrorActor->GetActorLocation();
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	TArray<FHitResult> HitArray;
+	const bool Hit = UKismetSystemLibrary::LineTraceMulti(this, TraceStart, TraceEnd, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::Type::None, HitArray, true);
+
+	// Handle result
+	TArray<AActor*> ActorsToHide;
+	if (Hit)
+	{
+		for (const FHitResult& Result : HitArray)	
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Orange, FString::Printf(TEXT("Hit %s"), *Result.GetActor()->GetName()));
+			ActorsToHide.Add(Result.GetActor());
+		}
+	}
+	SceneCaptureCubeActor->GetCaptureComponentCube()->HiddenActors = ActorsToHide;
 }
 
 // Called to bind functionality to input
