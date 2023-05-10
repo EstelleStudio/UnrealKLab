@@ -43,6 +43,8 @@ protected:
 		TObjectPtr<UInputAction> IA_LookMouse;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<UInputAction> IA_LookStick;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UInputAction> IA_Jump;
 
 	TObjectPtr<ALabMovableSceneCapMirror> MirrorActor;
 	TObjectPtr<ASceneCaptureCube> SceneCaptureCubeActor;

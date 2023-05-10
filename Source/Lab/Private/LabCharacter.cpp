@@ -148,6 +148,10 @@ void ALabCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		{
 			Input->BindAction(IA_LookStick, ETriggerEvent::Triggered, this, &ALabCharacter::Input_LookStick);
 		}
+		if (IA_Jump)
+		{
+			Input->BindAction(IA_Jump, ETriggerEvent::Triggered, this, &ALabCharacter::Jump);
+		}
 	}
 }
 
