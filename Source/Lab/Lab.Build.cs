@@ -7,7 +7,14 @@ public class Lab : ModuleRules
 	public Lab(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+
+		PublicIncludePaths.AddRange(
+			new string[]
+			{
+				"Lab"
+			}
+		);
+		
 		PublicDependencyModuleNames.AddRange(new string[] 
 		{ 
 			"Core", 
