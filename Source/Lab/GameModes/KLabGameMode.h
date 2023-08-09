@@ -15,6 +15,7 @@ class LAB_API AKLabGameMode : public AModularGameModeBase
 public:
 	// Sets default values for this actor's properties
 	AKLabGameMode();
+	virtual ~AKLabGameMode() override;
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
@@ -25,4 +26,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	void InitExperience();
 };
