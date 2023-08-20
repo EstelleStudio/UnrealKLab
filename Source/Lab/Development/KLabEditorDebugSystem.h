@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Common/KLab.h"
-#include "KLabDebugSystem.generated.h"
+#include "KLabEditorDebugSystem.generated.h"
 
 #if KLAB_DEBUG
 
-#define KLAB_DEBUG_REGISTER() UKLabDebugSystem::GetInstance()->Register(this);
-#define KLAB_DEBUG_ADDSTR(STR) UKLabDebugSystem::GetInstance()->AddString(this, STR);
+#define KLAB_DEBUG_REGISTER() UKLabEditorDebugSystem::GetInstance()->Register(this);
+#define KLAB_DEBUG_ADDSTR(STR) UKLabEditorDebugSystem::GetInstance()->AddString(this, STR);
 
 #else
 
@@ -20,7 +20,7 @@
 #endif
 
 UCLASS()
-class LAB_API UKLabDebugSystem : public UGameInstanceSubsystem
+class LAB_API UKLabEditorDebugSystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
@@ -32,10 +32,10 @@ public:
 	void Unregister(UObject* Obj);
 	void AddString(UObject* Obj, const FString& StringData);
 
-	static UKLabDebugSystem* GetInstance() { return Instance; }
+	static UKLabEditorDebugSystem* GetInstance() { return Instance; }
 
 private:
-	static UKLabDebugSystem* Instance;
+	static UKLabEditorDebugSystem* Instance;
 	
 #if KLAB_DEBUG
 	struct FKLabUObjectDebugData

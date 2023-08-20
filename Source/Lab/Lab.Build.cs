@@ -27,6 +27,7 @@ public class Lab : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"ModularGameplayActors",
+			"DeveloperSettings"
 		});
 
 		// Uncomment if you are using Slate UI

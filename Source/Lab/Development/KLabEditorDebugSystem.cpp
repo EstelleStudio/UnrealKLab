@@ -1,25 +1,25 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "KLabDebugSystem.h"
+#include "KLabEditorDebugSystem.h"
 
-UKLabDebugSystem* UKLabDebugSystem::Instance = nullptr;
+UKLabEditorDebugSystem* UKLabEditorDebugSystem::Instance = nullptr;
 
-void UKLabDebugSystem::Initialize(FSubsystemCollectionBase& Collection)
+void UKLabEditorDebugSystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	Instance = this;
 	AddToRoot();
 }
 
-void UKLabDebugSystem::Deinitialize()
+void UKLabEditorDebugSystem::Deinitialize()
 {
 	Super::Deinitialize();
 	Instance = nullptr;
 	RemoveFromRoot();
 }
 
-void UKLabDebugSystem::Register(UObject* Obj)
+void UKLabEditorDebugSystem::Register(UObject* Obj)
 {
 #if KLAB_DEBUG
 	if (!IsValid(Obj) || Obj->IsTemplate())
@@ -37,7 +37,7 @@ void UKLabDebugSystem::Register(UObject* Obj)
 #endif
 }
 
-void UKLabDebugSystem::Unregister(UObject* Obj)
+void UKLabEditorDebugSystem::Unregister(UObject* Obj)
 {
 #if KLAB_DEBUG
 	if (!IsValid(Obj) || Obj->IsTemplate())
@@ -56,7 +56,7 @@ void UKLabDebugSystem::Unregister(UObject* Obj)
 #endif
 }
 
-void UKLabDebugSystem::AddString(UObject* Obj, const FString& StringData)
+void UKLabEditorDebugSystem::AddString(UObject* Obj, const FString& StringData)
 {
 #if KLAB_DEBUG
 	if (IsValid(Obj))

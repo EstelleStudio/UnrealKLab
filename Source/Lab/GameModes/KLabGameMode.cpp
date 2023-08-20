@@ -5,7 +5,8 @@
 
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
-#include "System/KLabDebugSystem.h"
+#include "Development/KLabEditorDebugSystem.h"
+#include "Development/KLabEditorSettings.h"
 
 
 // Sets default values
@@ -22,11 +23,11 @@ AKLabGameMode::~AKLabGameMode()
 void AKLabGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::InitExperience);
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::InitPrimaryAssets);
 	
 	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
 		"[Frame: %lld] KLabGameMode InitGame().\n"
-		"Firstly, GameModeBase spawn GameSession in current world, Then KLabGameMode register a next-tick-called function to initialize PrimaryAssets of this map (Experience).\n"
+		"Firstly, GameModeBase spawn GameSession in current world, Then KLabGameMode register a next-tick-called function to initialize PrimaryAssets of this map (Lyra Experience).\n"
 		"Map: %ws\n"
 		"Options: %ws\n"
 		"GameSession Name: %ws\n"),
@@ -46,8 +47,63 @@ void AKLabGameMode::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AKLabGameMode::InitExperience()
+
+void AKLabGameMode::InitPrimaryAssets()
 {
-	//TODO:
+	FPrimaryAssetId KLabPrimaryAssetId;
+	FString KLabPrimaryAssetSource;
+	
+	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
+	SetPrimaryAssetsToGameState(KLabPrimaryAssetId, KLabPrimaryAssetSource);
+	
+	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
+		"[Frame: %lld] KLabGameMode InitPrimaryAssets().\n"
+		"KLab Primary Assets Id Name: %ws"
+		"KLab Primary Assets Id Type Name: %ws"
+		"KLab Primary Assets Source Name: %ws"),
+		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));
+}
+
+void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName)
+{
+	//Precedence Order
+	// - Editor (Developer Settings)
+	// - World Settings
+	// - Default
+
+	UWorld* World = GetWorld();
+
+	if (!OutId.IsValid() && World->IsPlayInEditor())
+	{
+		OutId = GetDefault<UKLabEditorSettings>()->ExperienceOverride;
+		OutSourceName = TEXT("DeveloperSettings");
+	}
+
+	// TODO:
+	// see if the world settings has a default experience
+	if (!OutId.IsValid())
+	{
+	}
+
+	// Final fallback to the default experience
+	if (!OutId.IsValid())
+	{
+		//ExperienceId = FPrimaryAssetId(FPrimaryAssetType("LyraExperienceDefinition"), FName("B_LyraDefaultExperience"));
+		OutSourceName = TEXT("Default");
+	}
+	
+}
+
+void AKLabGameMode::SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId, const FString& KLabPrimaryAssetSource)
+{
+	// TODO:
+	if (KLabPrimaryAssetId.IsValid())
+	{
+		
+	}
+	else
+	{
+		UE_LOG(LogLab, Error, TEXT("Lab Primary Data Asset is not valid."));
+	}
 }
 
