@@ -1,0 +1,3 @@
+[submodule "Plugins/ALS-Refactored"]
+	path = Plugins/ALS-Refactored
+	url = git@github.com:gadenflm/ALS-Refactored.git
