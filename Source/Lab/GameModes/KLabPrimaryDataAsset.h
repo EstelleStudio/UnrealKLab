@@ -9,8 +9,10 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Const)
 class LAB_API UKLabPrimaryDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
+
+
 };

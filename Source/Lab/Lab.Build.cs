@@ -21,17 +21,18 @@ public class Lab : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-			"EnhancedInput"
+			"EnhancedInput",
+			"NetCore", 
+			"PhysicsCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"ModularGameplayActors",
+			"ModularGameplay",
 			"DeveloperSettings",
 			"ALS",
 			"GameplayTags",
-			"NetCore", 
-			"PhysicsCore"
 		});
 
 		// Uncomment if you are using Slate UI

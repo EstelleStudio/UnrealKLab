@@ -29,5 +29,5 @@ protected:
 	
 private:
 	void GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName);
-	void SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId, const FString& KLabPrimaryAssetSource);
+	void SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId);
 };

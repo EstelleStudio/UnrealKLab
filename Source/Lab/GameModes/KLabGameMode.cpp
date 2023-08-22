@@ -3,6 +3,7 @@
 
 #include "KLabGameMode.h"
 
+#include "KLabPrimaryAssetManagerComponent.h"
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
 #include "Development/KLabEditorDebugSystem.h"
@@ -38,7 +39,6 @@ void AKLabGameMode::InitGame(const FString& MapName, const FString& Options, FSt
 void AKLabGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -54,7 +54,7 @@ void AKLabGameMode::InitPrimaryAssets()
 	FString KLabPrimaryAssetSource;
 	
 	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
-	SetPrimaryAssetsToGameState(KLabPrimaryAssetId, KLabPrimaryAssetSource);
+	SetPrimaryAssetsToGameState(KLabPrimaryAssetId);
 	
 	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
 		"[Frame: %lld] KLabGameMode InitPrimaryAssets().\n"
@@ -75,7 +75,7 @@ void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSource
 
 	if (!OutId.IsValid() && World->IsPlayInEditor())
 	{
-		OutId = GetDefault<UKLabEditorSettings>()->ExperienceOverride;
+		OutId = GetDefault<UKLabEditorSettings>()->EditorPrimaryAsset;
 		OutSourceName = TEXT("DeveloperSettings");
 	}
 
@@ -94,12 +94,13 @@ void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSource
 	
 }
 
-void AKLabGameMode::SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId, const FString& KLabPrimaryAssetSource)
+void AKLabGameMode::SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId)
 {
-	// TODO:
 	if (KLabPrimaryAssetId.IsValid())
 	{
-		
+		UKLabPrimaryAssetManagerComponent* PrimaryAssetManagerComp = GameState->FindComponentByClass<UKLabPrimaryAssetManagerComponent>();
+		check(PrimaryAssetManagerComp);
+		PrimaryAssetManagerComp->SetCurrentPrimaryAsset(KLabPrimaryAssetId);
 	}
 	else
 	{
