@@ -29,7 +29,9 @@ public class Lab : ModuleRules
 			"ModularGameplayActors",
 			"DeveloperSettings",
 			"ALS",
-			"GameplayTags"
+			"GameplayTags",
+			"NetCore", 
+			"PhysicsCore"
 		});
 
 		// Uncomment if you are using Slate UI

@@ -40,8 +40,6 @@ public:
 	explicit FKLabALSAnimationInstanceProxy(UAnimInstance* AnimationInstance): FAnimInstanceProxy(AnimationInstance) {};
 };
 
-
-
 /**
  * 
  */
@@ -259,6 +257,13 @@ private:
 
 	void PlayQueuedTurnInPlaceAnimation();
 
+	// view
+private:
+
+	void RefreshView(float DeltaTime);
+
+	void RefreshSpineRotation(float DeltaTime);
+	
 public:
 	virtual bool IsSpineRotationAllowed();
 	

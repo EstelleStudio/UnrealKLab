@@ -3,17 +3,33 @@
 
 #include "KLabALSCharacter.h"
 
+#include "AlsCharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Animation/KLabALSComponent.h"
+#include "Utility/AlsMath.h"
 
 
-// Sets default values
-AKLabALSCharacter::AKLabALSCharacter()
+AKLabALSCharacter::AKLabALSCharacter(const FObjectInitializer& ObjectInitializer) : Super{
+	ObjectInitializer.SetDefaultSubobjectClass<UAlsCharacterMovementComponent>(CharacterMovementComponentName)
+}
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	bUseControllerRotationYaw = false;
+	AlsCharacterMovement = Cast<UAlsCharacterMovementComponent>(GetCharacterMovement());
 	ALSComponent = CreateDefaultSubobject<UKLabALSComponent>(TEXT("ALS Component"));
+}
+
+void AKLabALSCharacter::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
+{	
+	ALSComponent->OnMovementModeChanged(GetCharacterMovement()->MovementMode);
+	Super::OnMovementModeChanged(PreviousMovementMode, PreviousCustomMode);
+}
+
+FRotator AKLabALSCharacter::GetViewRotation() const
+{
+	return ALSComponent->GetViewRotation();
 }
 
 // Called when the game starts or when spawned
@@ -31,19 +47,13 @@ void AKLabALSCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	if (PlayerController)
 	{
 		const FVector2D Value = InputActionValue.Get<FVector2D>();
-		const FRotator MovementRotation(0.0f, PlayerController->GetControlRotation().Yaw, 0.0f);
+		// const FRotator MovementRotation(0.0f, PlayerController->GetControlRotation().Yaw, 0.0f);
+		//
+		const auto ForwardDirection{UAlsMath::AngleToDirectionXY(UE_REAL_TO_FLOAT(ALSComponent->GetViewState().Rotation.Yaw))};
+		const auto RightDirection{UAlsMath::PerpendicularCounterClockwiseXY(ForwardDirection)};
 
-		if (Value.X != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
-			AddMovementInput(MovementDirection, Value.X);
-		}
+		AddMovementInput(ForwardDirection * Value.Y + RightDirection * Value.X);
 
-		if (Value.Y != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			AddMovementInput(MovementDirection, Value.Y);
-		}
 	}
 }
 

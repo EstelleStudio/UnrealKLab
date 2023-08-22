@@ -6,24 +6,43 @@
 #include "GameFramework/Character.h"
 #include "KLabALSCharacter.generated.h"
 
+struct FInputActionValue;
 class UKLabALSComponent;
 class UInputAction;
 class UInputMappingContext;
-struct FInputActionValue;
+class UAlsCharacterMovementComponent;
 
 UCLASS()
 class LAB_API AKLabALSCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+/**************************************************************************************************/	
+/************************************* ALS Related Logic ******************************************/
+/**************************************************************************************************/
+	
 public:
-	// Sets default values for this character's properties
-	AKLabALSCharacter();
+	explicit AKLabALSCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode = 0) override;
+
+	virtual FRotator GetViewRotation() const override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "KLab|ALS")
 	TObjectPtr<UKLabALSComponent> ALSComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Als Character")
+	TObjectPtr<UAlsCharacterMovementComponent> AlsCharacterMovement;
+
+
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_LookMouse(const FInputActionValue& InputActionValue);
 	
-protected:
+/**************************************************************************************************/
+/**************************************************************************************************/	
+/**************************************************************************************************/
+
+	
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	// Input:
@@ -35,8 +54,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "KLab|Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> IA_LookMouse;
 
-	void Input_Move(const FInputActionValue& InputActionValue);
-	void Input_LookMouse(const FInputActionValue& InputActionValue);
 
 public:
 	// Called every frame

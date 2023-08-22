@@ -39,6 +39,12 @@ protected:
 	UKLabALSAnimInstance* GetParentUnsafe() const;
 
 	UFUNCTION(BlueprintCallable, Category = "KLab|ALS", Meta = (BlueprintProtected, BlueprintThreadSafe))
+	void ReinitializeLook();
+
+	UFUNCTION(BlueprintCallable, Category = "KLab|ALS", Meta = (BlueprintProtected, BlueprintThreadSafe))
+	void RefreshLook();
+
+	UFUNCTION(BlueprintCallable, Category = "KLab|ALS", Meta = (BlueprintProtected, BlueprintThreadSafe))
 	void ResetGroundedEntryMode();
 
 	UFUNCTION(BlueprintCallable, Category = "KLab|ALS", Meta = (BlueprintProtected, BlueprintThreadSafe))

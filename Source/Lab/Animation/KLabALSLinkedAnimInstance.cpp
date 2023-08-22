@@ -30,6 +30,22 @@ FAnimInstanceProxy* UKLabALSLinkedAnimInstance::CreateAnimInstanceProxy()
 	return new FKLabALSAnimationInstanceProxy{this};
 }
 
+void UKLabALSLinkedAnimInstance::ReinitializeLook()
+{
+	if (Parent.IsValid())
+	{
+		Parent->ReinitializeLook();
+	}
+}
+
+void UKLabALSLinkedAnimInstance::RefreshLook()
+{
+	if (Parent.IsValid())
+	{
+		Parent->RefreshLook();
+	}
+}
+
 void UKLabALSLinkedAnimInstance::ResetGroundedEntryMode()
 {
 	if (Parent.IsValid())

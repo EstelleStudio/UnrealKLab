@@ -54,19 +54,17 @@ void UKLabALSAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		const_cast<FTransform&>(Proxy.GetActorTransform()) = ActorTransform;
 	}
 
-
-	// TODO:
 	LocomotionMode = ALSComp->GetLocomotionMode();
-	//RotationMode = ALSComp->GetRotationMode();
-	//Stance = ALSComp->GetStance();
-	//Gait = ALSComp->GetGait();
+	RotationMode = ALSComp->GetRotationMode();
+	Stance = ALSComp->GetStance();
+	Gait = ALSComp->GetGait();
 	
-	/*if (LocomotionAction != ALSComp->GetLocomotionAction())
+	if (LocomotionAction != ALSComp->GetLocomotionAction())
 	{
 		LocomotionAction = ALSComp->GetLocomotionAction();
 
 		ResetGroundedEntryMode();
-	}*/
+	}
 
 	RefreshMovementBaseOnGameThread();
 	RefreshViewOnGameThread();
@@ -74,6 +72,7 @@ void UKLabALSAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	RefreshGroundedOnGameThread();
 	RefreshInAirOnGameThread();
 	RefreshFeetOnGameThread();
+	RefreshViewOnGameThread();
 }
 
 void UKLabALSAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
@@ -92,6 +91,7 @@ void UKLabALSAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 	RefreshTransitions();
 	RefreshRotateInPlace(DeltaTime);
 	RefreshTurnInPlace(DeltaTime);
+	RefreshView(DeltaTime);
 }
 
 void UKLabALSAnimInstance::NativePostEvaluateAnimation()
@@ -249,12 +249,12 @@ void UKLabALSAnimInstance::PlayTransitionAnimation(UAnimSequenceBase* Animation,
 	if (!Character.IsValid())
 	{
 		return;
-}
-	//TODO:
-	/*if (bFromStandingIdleOnly && (ALSComp->GetLocomotionState().bMoving || ALSComp->GetStance() != AlsStanceTags::Standing))
+	}
+	
+	if (bFromStandingIdleOnly && (ALSComp->GetLocomotionState().bMoving || ALSComp->GetStance() != AlsStanceTags::Standing))
 	{
 		return;
-	}*/
+	}
 
 	PlaySlotAnimationAsDynamicMontage(Animation, UAlsConstants::TransitionSlotName(),
 									  BlendInDuration, BlendOutDuration, PlayRate, 1, 0.0f, StartTime);
@@ -299,10 +299,10 @@ void UKLabALSAnimInstance::RefreshViewOnGameThread()
 {
 	check(IsInGameThread())
 
-	// const auto& View{ALSComp->GetViewState()};
+	const auto& View{ALSComp->GetViewState()};
 
-	// ViewState.Rotation = View.Rotation;
-	// ViewState.YawSpeed = View.YawSpeed;
+	ViewState.Rotation = View.Rotation;
+	ViewState.YawSpeed = View.YawSpeed;
 }
 
 void UKLabALSAnimInstance::RefreshMovementBaseOnGameThread()
@@ -375,40 +375,39 @@ void UKLabALSAnimInstance::RefreshLocomotionOnGameThread()
 {
 	check(IsInGameThread())
 
-	// TODO:
-	// const auto& Locomotion{ALSComp->GetLocomotionState()};
-	//
-	// LocomotionState.bHasInput = Locomotion.bHasInput;
-	// LocomotionState.InputYawAngle = Locomotion.InputYawAngle;
-	//
-	// LocomotionState.Speed = Locomotion.Speed;
-	// LocomotionState.Velocity = Locomotion.Velocity;
-	// LocomotionState.VelocityYawAngle = Locomotion.VelocityYawAngle;
-	// LocomotionState.Acceleration = Locomotion.Acceleration;
-	//
-	// const auto* Movement{Character->GetCharacterMovement()};
-	//
-	// LocomotionState.MaxAcceleration = Movement->GetMaxAcceleration();
-	// LocomotionState.MaxBrakingDeceleration = Movement->GetMaxBrakingDeceleration();
-	// LocomotionState.WalkableFloorZ = Movement->GetWalkableFloorZ();
-	//
-	// LocomotionState.bMoving = Locomotion.bMoving;
-	//
-	// LocomotionState.bMovingSmooth = (Locomotion.bHasInput && Locomotion.bHasSpeed) ||
-	// 								Locomotion.Speed > Settings->General.MovingSmoothSpeedThreshold;
-	//
-	// LocomotionState.TargetYawAngle = Locomotion.TargetYawAngle;
-	// LocomotionState.Location = Locomotion.Location;
-	// LocomotionState.Rotation = Locomotion.Rotation;
-	// LocomotionState.RotationQuaternion = Locomotion.RotationQuaternion;
-	// LocomotionState.YawSpeed = Locomotion.YawSpeed;
-	//
-	// LocomotionState.Scale = UE_REAL_TO_FLOAT(GetSkelMeshComponent()->GetComponentScale().Z);
-	//
-	// const auto* Capsule{Character->GetCapsuleComponent()};
-	//
-	// LocomotionState.CapsuleRadius = Capsule->GetScaledCapsuleRadius();
-	// LocomotionState.CapsuleHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+	const auto& Locomotion{ALSComp->GetLocomotionState()};
+	
+	LocomotionState.bHasInput = Locomotion.bHasInput;
+	LocomotionState.InputYawAngle = Locomotion.InputYawAngle;
+	
+	LocomotionState.Speed = Locomotion.Speed;
+	LocomotionState.Velocity = Locomotion.Velocity;
+	LocomotionState.VelocityYawAngle = Locomotion.VelocityYawAngle;
+	LocomotionState.Acceleration = Locomotion.Acceleration;
+	
+	const auto* Movement{Character->GetCharacterMovement()};
+	
+	LocomotionState.MaxAcceleration = Movement->GetMaxAcceleration();
+	LocomotionState.MaxBrakingDeceleration = Movement->GetMaxBrakingDeceleration();
+	LocomotionState.WalkableFloorZ = Movement->GetWalkableFloorZ();
+	
+	LocomotionState.bMoving = Locomotion.bMoving;
+	
+	LocomotionState.bMovingSmooth = (Locomotion.bHasInput && Locomotion.bHasSpeed) ||
+									Locomotion.Speed > Settings->General.MovingSmoothSpeedThreshold;
+	
+	LocomotionState.TargetYawAngle = Locomotion.TargetYawAngle;
+	LocomotionState.Location = Locomotion.Location;
+	LocomotionState.Rotation = Locomotion.Rotation;
+	LocomotionState.RotationQuaternion = Locomotion.RotationQuaternion;
+	LocomotionState.YawSpeed = Locomotion.YawSpeed;
+	
+	LocomotionState.Scale = UE_REAL_TO_FLOAT(GetSkelMeshComponent()->GetComponentScale().Z);
+	
+	const auto* Capsule{Character->GetCapsuleComponent()};
+	
+	LocomotionState.CapsuleRadius = Capsule->GetScaledCapsuleRadius();
+	LocomotionState.CapsuleHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
 }
 
 void UKLabALSAnimInstance::RefreshGroundedOnGameThread()
@@ -470,8 +469,6 @@ void UKLabALSAnimInstance::RefreshGrounded(float DeltaTime)
 	RefreshWalkRunBlendAmount();
 
 	RefreshStandingPlayRate();
-	// TODO:?
-	//RefreshCrouchingPlayRate();
 
 	RefreshGroundedLeanAmount(RelativeAccelerationAmount, DeltaTime);
 }
@@ -1394,6 +1391,61 @@ if (!IsValid(TurnInPlaceState.QueuedSettings))
 	TurnInPlaceState.QueuedSettings = nullptr;
 	TurnInPlaceState.QueuedSlotName = NAME_None;
 	TurnInPlaceState.QueuedTurnYawAngle = 0.0f;
+}
+
+void UKLabALSAnimInstance::RefreshView(float DeltaTime)
+{
+	if (!LocomotionAction.IsValid())
+	{
+		ViewState.YawAngle = FRotator3f::NormalizeAxis(UE_REAL_TO_FLOAT(ViewState.Rotation.Yaw - LocomotionState.Rotation.Yaw));
+		ViewState.PitchAngle = FRotator3f::NormalizeAxis(UE_REAL_TO_FLOAT(ViewState.Rotation.Pitch - LocomotionState.Rotation.Pitch));
+
+		ViewState.PitchAmount = 0.5f - ViewState.PitchAngle / 180.0f;
+	}
+
+	const auto ViewAmount{1.0f - GetCurveValueClamped01(UAlsConstants::ViewBlockCurveName())};
+	const auto AimingAmount{GetCurveValueClamped01(UAlsConstants::AllowAimingCurveName())};
+
+	ViewState.LookAmount = ViewAmount * (1.0f - AimingAmount);
+
+	RefreshSpineRotation(DeltaTime);
+
+	ViewState.SpineRotation.YawAngle *= ViewAmount * AimingAmount;
+}
+
+void UKLabALSAnimInstance::RefreshSpineRotation(float DeltaTime)
+{
+	auto& SpineRotation{ViewState.SpineRotation};
+
+	if (SpineRotation.bSpineRotationAllowed != IsSpineRotationAllowed())
+	{
+		SpineRotation.bSpineRotationAllowed = !SpineRotation.bSpineRotationAllowed;
+		SpineRotation.StartYawAngle = SpineRotation.CurrentYawAngle;
+	}
+
+	if (SpineRotation.bSpineRotationAllowed)
+	{
+		static constexpr auto InterpolationSpeed{20.0f};
+
+		SpineRotation.SpineAmount = bPendingUpdate
+										? 1.0f
+										: UAlsMath::ExponentialDecay(SpineRotation.SpineAmount, 1.0f, DeltaTime, InterpolationSpeed);
+
+		SpineRotation.TargetYawAngle = ViewState.YawAngle;
+	}
+	else
+	{
+		static constexpr auto InterpolationSpeed{10.0f};
+
+		SpineRotation.SpineAmount = bPendingUpdate
+										? 0.0f
+										: UAlsMath::ExponentialDecay(SpineRotation.SpineAmount, 0.0f, DeltaTime, InterpolationSpeed);
+	}
+
+	SpineRotation.CurrentYawAngle = UAlsMath::LerpAngle(SpineRotation.StartYawAngle, SpineRotation.TargetYawAngle,
+														SpineRotation.SpineAmount);
+
+	SpineRotation.YawAngle = SpineRotation.CurrentYawAngle;
 }
 
 float UKLabALSAnimInstance::GetCurveValueClamped01(const FName& CurveName) const
