@@ -27,6 +27,8 @@ public:
 
 	virtual FRotator GetViewRotation() const override;
 
+	FRotator GetNativeViewRotation() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "KLab|ALS")
 	TObjectPtr<UKLabALSComponent> ALSComponent;
 

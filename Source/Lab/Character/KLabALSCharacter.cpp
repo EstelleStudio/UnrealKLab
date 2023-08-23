@@ -32,11 +32,16 @@ FRotator AKLabALSCharacter::GetViewRotation() const
 	return ALSComponent->GetViewRotation();
 }
 
+FRotator AKLabALSCharacter::GetNativeViewRotation() const
+{
+	return Super::GetViewRotation();
+}
+
 // Called when the game starts or when spawned
 void AKLabALSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AKLabALSCharacter::Input_Move(const FInputActionValue& InputActionValue)

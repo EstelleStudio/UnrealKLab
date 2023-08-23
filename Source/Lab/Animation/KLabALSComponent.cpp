@@ -6,6 +6,7 @@
 #include "AlsCharacterMovementComponent.h"
 #include "KLabALSAnimInstance.h"
 #include "Character/KLabALSCharacter.h"
+#include "Common/KLab.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/GameNetworkManager.h"
 #include "Net/UnrealNetwork.h"
@@ -24,13 +25,6 @@ void UKLabALSComponent::OnRegister()
 	RotationMode = bDesiredAiming ? AlsRotationModeTags::Aiming : DesiredRotationMode;
 	Stance = DesiredStance;
 	Gait = DesiredGait;
-
-	SetReplicatedViewRotation(GetViewRotation().GetNormalized());
-
-	ViewState.NetworkSmoothing.InitialRotation = ReplicatedViewRotation;
-	ViewState.NetworkSmoothing.Rotation = ReplicatedViewRotation;
-	ViewState.Rotation = ReplicatedViewRotation;
-	ViewState.PreviousYawAngle = UE_REAL_TO_FLOAT(ReplicatedViewRotation.Yaw);
 	
 	Super::OnRegister();
 }
@@ -41,11 +35,18 @@ void UKLabALSComponent::BeginPlay()
 {
 	// Make sure the mesh and animation blueprint are ticking after the this component so they can access the most up-to-date character state.
 
-	Owner = Cast<ACharacter>(GetOwner());
+	Owner = Cast<AKLabALSCharacter>(GetOwner());
 	check(Owner.IsValid());
 	
-	AlsCharacterMovement= Cast<AKLabALSCharacter>(Owner)->AlsCharacterMovement;
+	AlsCharacterMovement= Owner->AlsCharacterMovement;
 	Owner->GetMesh()->AddTickPrerequisiteComponent(this);
+	
+	SetReplicatedViewRotation(Owner->GetNativeViewRotation().GetNormalized());
+
+	ViewState.NetworkSmoothing.InitialRotation = ReplicatedViewRotation;
+	ViewState.NetworkSmoothing.Rotation = ReplicatedViewRotation;
+	ViewState.Rotation = ReplicatedViewRotation;
+	ViewState.PreviousYawAngle = UE_REAL_TO_FLOAT(ReplicatedViewRotation.Yaw);
 
 	const auto& ActorTransform{Owner->GetActorTransform()};
 
@@ -91,7 +92,7 @@ void UKLabALSComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 		return;
 	}
-
+	
 	RefreshVisibilityBasedAnimTickOption();
 
 	RefreshMovementBase();
@@ -126,6 +127,9 @@ void UKLabALSComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// {
 	// 	AnimationInstance->MarkPendingUpdate();
 	// }
+
+	// TODO:
+
 }
 
 void UKLabALSComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -201,6 +205,9 @@ void UKLabALSComponent::RefreshMovementBase()
 	MovementBase.DeltaRotation = MovementBase.bHasRelativeLocation && !MovementBase.bBaseChanged
 									 ? (MovementBase.Rotation * PreviousRotation.Inverse()).Rotator()
 									 : FRotator::ZeroRotator;
+
+	UE_LOG(LogLab, Log, TEXT("MovementBase Rotation: %ws"), *MovementBase.Rotation.ToString())
+	UE_LOG(LogLab, Log, TEXT("MovementBase Delta Rotation: %ws"), *MovementBase.DeltaRotation.ToString())
 }
 
 const FGameplayTag& UKLabALSComponent::GetViewMode() const
@@ -365,6 +372,9 @@ void UKLabALSComponent::RefreshRotationMode()
 			SetRotationMode(DesiredRotationMode);
 		}
 	}
+
+	// TODO:
+	SetRotationMode(AlsRotationModeTags::Aiming);
 }
 
 const FGameplayTag& UKLabALSComponent::GetStance() const
@@ -622,7 +632,7 @@ void UKLabALSComponent::RefreshView(float DeltaTime)
 
 	if ((Owner->IsReplicatingMovement() && GetOwnerRole() >= ROLE_AutonomousProxy) || Owner->IsLocallyControlled())
 	{
-		SetReplicatedViewRotation(GetViewRotation().GetNormalized());
+		SetReplicatedViewRotation(Owner->GetNativeViewRotation().GetNormalized());
 	}
 
 	RefreshViewNetworkSmoothing(DeltaTime);
@@ -633,6 +643,8 @@ void UKLabALSComponent::RefreshView(float DeltaTime)
 	// delta seconds. This represents the speed the camera is rotating from left to right.
 
 	ViewState.YawSpeed = FMath::Abs(UE_REAL_TO_FLOAT(ViewState.Rotation.Yaw - ViewState.PreviousYawAngle)) / DeltaTime;
+
+	UE_LOG(LogLab, Log, TEXT("View Rotation: %ws"), *ViewState.Rotation.ToString());
 }
 
 void UKLabALSComponent::RefreshViewNetworkSmoothing(float DeltaTime)
@@ -805,7 +817,7 @@ void UKLabALSComponent::RefreshLocomotionLate(float DeltaTime)
 
 void UKLabALSComponent::RefreshGroundedRotation(float DeltaTime)
 {
-		if (LocomotionAction.IsValid() || LocomotionMode != AlsLocomotionModeTags::Grounded)
+	if (LocomotionAction.IsValid() || LocomotionMode != AlsLocomotionModeTags::Grounded)
 	{
 		return;
 	}

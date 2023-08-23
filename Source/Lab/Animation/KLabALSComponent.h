@@ -15,6 +15,7 @@ class UKLabALSAnimInstance;
 class UAlsCharacterMovementComponent;
 class UAlsCharacterSettings;
 class UAlsMovementSettings;
+class AKLabALSCharacter;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class LAB_API UKLabALSComponent : public UActorComponent
@@ -32,7 +33,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	TWeakObjectPtr<ACharacter> Owner = nullptr;
+	TWeakObjectPtr<AKLabALSCharacter> Owner = nullptr;
 	TWeakObjectPtr<UAlsCharacterMovementComponent> AlsCharacterMovement;
 	TWeakObjectPtr<UKLabALSAnimInstance> AnimationInstance;
 	
