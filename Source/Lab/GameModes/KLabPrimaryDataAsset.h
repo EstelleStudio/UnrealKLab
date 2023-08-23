@@ -14,5 +14,9 @@ class LAB_API UKLabPrimaryDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
+public:
+	// List of Game Feature Plugins this experience wants to have active
+	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
+	TArray<FString> GameFeaturesToEnable;
 
 };

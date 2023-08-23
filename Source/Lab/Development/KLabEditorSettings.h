@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettingsBackedByCVars.h"
+#include "GameModes/KLabPrimaryDataAsset.h"
 #include "KLabEditorSettings.generated.h"
 
 UCLASS(Config=KLabEditor, DefaultConfig, meta=(DisplayName="KLabEditor"), MinimalAPI)
@@ -13,7 +14,6 @@ class UKLabEditorSettings : public UDeveloperSettingsBackedByCVars
 	UKLabEditorSettings();
 public:
 	// The primary assets override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category = KLabEditor, meta=(AllowedClasses="KLabPrimaryDataAsset"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category = KLabEditor, meta=(AllowedType="KLabPrimaryDataAsset"))
 	FPrimaryAssetId EditorPrimaryAsset;
-	
 };

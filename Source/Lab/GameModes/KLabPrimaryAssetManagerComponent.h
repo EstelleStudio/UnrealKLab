@@ -7,6 +7,8 @@
 #include "KLabPrimaryAssetManagerComponent.generated.h"
 
 
+class UKLabPrimaryDataAsset;
+
 UCLASS()
 class UKLabPrimaryAssetManagerComponent final : public UGameStateComponent
 {
@@ -15,13 +17,9 @@ class UKLabPrimaryAssetManagerComponent final : public UGameStateComponent
 public:
 	UKLabPrimaryAssetManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	void SetCurrentPrimaryAsset(FPrimaryAssetId ExperienceId);
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	void SetCurrentPrimaryAsset(FPrimaryAssetId Id);
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	UPROPERTY()
+	TObjectPtr<const UKLabPrimaryDataAsset> CurrentPrimaryAsset;
 };

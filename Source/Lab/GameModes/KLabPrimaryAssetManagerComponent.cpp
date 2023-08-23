@@ -3,33 +3,26 @@
 
 #include "KLabPrimaryAssetManagerComponent.h"
 
+#include "KLabPrimaryDataAsset.h"
+#include "Common/KLab.h"
+#include "System/KLabAssetManager.h"
+
 UKLabPrimaryAssetManagerComponent::UKLabPrimaryAssetManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+}
+
+void UKLabPrimaryAssetManagerComponent::SetCurrentPrimaryAsset(FPrimaryAssetId Id)
+{
+	UKLabAssetManager& AssetManager = UKLabAssetManager::Get();
+	FSoftObjectPath AssetPath = AssetManager.GetPrimaryAssetPath(Id);
+	TSubclassOf<UKLabPrimaryDataAsset> AssetClass = Cast<UClass>(AssetPath.TryLoad());
 	
+	check(AssetClass);
+	const UKLabPrimaryDataAsset* PrimaryDataAsset = GetDefault<UKLabPrimaryDataAsset>(AssetClass);
+
+	CurrentPrimaryAsset = PrimaryDataAsset;
+
+	UE_LOG(LogLab, Log, TEXT("%ws"), *CurrentPrimaryAsset->GameFeaturesToEnable[0]);
 }
 
-void UKLabPrimaryAssetManagerComponent::SetCurrentPrimaryAsset(FPrimaryAssetId ExperienceId)
-{
-	//TODO:
-}
-
-
-// Called when the game starts
-void UKLabPrimaryAssetManagerComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UKLabPrimaryAssetManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                                      FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
 

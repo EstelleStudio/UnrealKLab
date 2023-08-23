@@ -3,17 +3,20 @@
 
 #include "KLabGameMode.h"
 
+#include "KLabGameState.h"
 #include "KLabPrimaryAssetManagerComponent.h"
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
 #include "Development/KLabEditorDebugSystem.h"
 #include "Development/KLabEditorSettings.h"
+#include "Engine/AssetManager.h"
 
 
 // Sets default values
 AKLabGameMode::AKLabGameMode()
 {
 	KLAB_DEBUG_REGISTER();
+	GameStateClass = AKLabGameState::StaticClass();
 }
 
 AKLabGameMode::~AKLabGameMode()
