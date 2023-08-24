@@ -205,9 +205,6 @@ void UKLabALSComponent::RefreshMovementBase()
 	MovementBase.DeltaRotation = MovementBase.bHasRelativeLocation && !MovementBase.bBaseChanged
 									 ? (MovementBase.Rotation * PreviousRotation.Inverse()).Rotator()
 									 : FRotator::ZeroRotator;
-
-	UE_LOG(LogLab, Log, TEXT("MovementBase Rotation: %ws"), *MovementBase.Rotation.ToString())
-	UE_LOG(LogLab, Log, TEXT("MovementBase Delta Rotation: %ws"), *MovementBase.DeltaRotation.ToString())
 }
 
 const FGameplayTag& UKLabALSComponent::GetViewMode() const
@@ -643,8 +640,6 @@ void UKLabALSComponent::RefreshView(float DeltaTime)
 	// delta seconds. This represents the speed the camera is rotating from left to right.
 
 	ViewState.YawSpeed = FMath::Abs(UE_REAL_TO_FLOAT(ViewState.Rotation.Yaw - ViewState.PreviousYawAngle)) / DeltaTime;
-
-	UE_LOG(LogLab, Log, TEXT("View Rotation: %ws"), *ViewState.Rotation.ToString());
 }
 
 void UKLabALSComponent::RefreshViewNetworkSmoothing(float DeltaTime)
