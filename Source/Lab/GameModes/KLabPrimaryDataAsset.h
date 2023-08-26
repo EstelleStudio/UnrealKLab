@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "KLabPrimaryDataAsset.generated.h"
 
+class UKLabPawnPrimaryData;
 /**
  * 
  */
@@ -15,8 +16,7 @@ class LAB_API UKLabPrimaryDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	// List of Game Feature Plugins this experience wants to have active
-	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
-	TArray<FString> GameFeaturesToEnable;
-
+	UPROPERTY(EditDefaultsOnly, Category="KLab|Gameplay")
+	TObjectPtr<UKLabPawnPrimaryData> PawnData;
+	
 };

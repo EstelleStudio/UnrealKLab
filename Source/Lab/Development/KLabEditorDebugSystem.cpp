@@ -21,7 +21,7 @@ void UKLabEditorDebugSystem::Deinitialize()
 
 void UKLabEditorDebugSystem::Register(UObject* Obj)
 {
-#if KLAB_DEBUG
+#if KLAB_EDITOR_DEBUG
 	if (!IsValid(Obj) || Obj->IsTemplate())
 	{
 		return;
@@ -39,7 +39,7 @@ void UKLabEditorDebugSystem::Register(UObject* Obj)
 
 void UKLabEditorDebugSystem::Unregister(UObject* Obj)
 {
-#if KLAB_DEBUG
+#if KLAB_EDITOR_DEBUG
 	if (!IsValid(Obj) || Obj->IsTemplate())
 	{
 		return;
@@ -58,7 +58,7 @@ void UKLabEditorDebugSystem::Unregister(UObject* Obj)
 
 void UKLabEditorDebugSystem::AddString(UObject* Obj, const FString& StringData)
 {
-#if KLAB_DEBUG
+#if KLAB_EDITOR_DEBUG
 	if (IsValid(Obj))
 	{
 		const uint32 Id = Obj->GetUniqueID();

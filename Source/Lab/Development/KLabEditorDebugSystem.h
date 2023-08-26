@@ -7,7 +7,7 @@
 #include "Common/KLab.h"
 #include "KLabEditorDebugSystem.generated.h"
 
-#if KLAB_DEBUG
+#if KLAB_EDITOR_DEBUG
 
 #define KLAB_DEBUG_REGISTER() UKLabEditorDebugSystem::GetInstance()->Register(this);
 #define KLAB_DEBUG_ADDSTR(STR) UKLabEditorDebugSystem::GetInstance()->AddString(this, STR);
@@ -37,7 +37,7 @@ public:
 private:
 	static UKLabEditorDebugSystem* Instance;
 	
-#if KLAB_DEBUG
+#if KLAB_EDITOR_DEBUG
 	struct FKLabUObjectDebugData
 	{
 		explicit FKLabUObjectDebugData(UObject* InObj) : ObjectPtr(InObj)

@@ -22,7 +22,6 @@ void UKLabPrimaryAssetManagerComponent::SetCurrentPrimaryAsset(FPrimaryAssetId I
 
 	CurrentPrimaryAsset = PrimaryDataAsset;
 
-	UE_LOG(LogLab, Log, TEXT("%ws"), *CurrentPrimaryAsset->GameFeaturesToEnable[0]);
 }
 
 
