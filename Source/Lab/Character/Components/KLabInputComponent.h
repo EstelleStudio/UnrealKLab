@@ -16,7 +16,7 @@ class LAB_API UKLabInputComponent : public UPawnComponent
 	explicit UKLabInputComponent(const FObjectInitializer& ObjectInitializer);
 protected:
 	UPROPERTY(EditAnywhere, Category="KLab|Input")
-	TArray<UPlayerMappableInputConfig> ArrayOfInputConfigs;
+	TArray<TSoftObjectPtr<UPlayerMappableInputConfig>> ArrayOfInputConfigs;
 	
 	bool bReadyToBindInputs = false;
 };
