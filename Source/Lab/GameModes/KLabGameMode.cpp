@@ -59,12 +59,12 @@ void AKLabGameMode::InitPrimaryAssets()
 	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
 	SetPrimaryAssetsToGameState(KLabPrimaryAssetId);
 	
-	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
+	/*KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
 		"[Frame: %lld] KLabGameMode InitPrimaryAssets().\n"
 		"KLab Primary Assets Id Name: %ws"
 		"KLab Primary Assets Id Type Name: %ws"
 		"KLab Primary Assets Source Name: %ws"),
-		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));
+		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));*/
 }
 
 void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName)
