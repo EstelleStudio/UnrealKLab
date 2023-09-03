@@ -44,14 +44,12 @@ void UKLabEditorDebugSystem::Unregister(UObject* Obj)
 	{
 		return;
 	}
-
 	const uint32 Id = Obj->GetUniqueID();
 	if (UObjectMap.Contains(Id))
 	{
 		UObjectMap.Remove(Id);
 		return;
 	}
-	
 	check(false);
 #endif
 }
@@ -59,17 +57,18 @@ void UKLabEditorDebugSystem::Unregister(UObject* Obj)
 void UKLabEditorDebugSystem::AddString(UObject* Obj, const FString& StringData)
 {
 #if KLAB_EDITOR_DEBUG
-	if (IsValid(Obj))
+	// TODO: Fix bug
+	/*if (IsValid(Obj))
 	{
 		const uint32 Id = Obj->GetUniqueID();
 		FKLabUObjectDebugData& DebugData = UObjectMap.FindChecked(Id);
 		if (UObjectMap.Contains(Id))
 		{
 			DebugData.DebugStr.Append(StringData);
-			return;
 		}
+		return;
 	}
-	check(false);
+	check(false);*/
 #endif
 }
 

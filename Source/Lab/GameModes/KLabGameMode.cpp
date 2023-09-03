@@ -5,6 +5,7 @@
 
 #include "KLabGameState.h"
 #include "KLabPrimaryAssetManagerComponent.h"
+#include "Character/Components/KLabPawnComponent.h"
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
 #include "Development/KLabEditorDebugSystem.h"
@@ -21,7 +22,7 @@ AKLabGameMode::AKLabGameMode()
 
 AKLabGameMode::~AKLabGameMode()
 {
-	//TODO:
+	KLAB_DEBUG_UNREGISTER();
 }
 
 void AKLabGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -38,18 +39,46 @@ void AKLabGameMode::InitGame(const FString& MapName, const FString& Options, FSt
 		GFrameCounter, *MapName, *Options, *GameSession->SessionName.ToString()));
 }
 
-// Called when the game starts or when spawned
 void AKLabGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
+APawn* AKLabGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,
+	const FTransform& SpawnTransform)
+{
+	FActorSpawnParameters SpawnInfo;
+ 	SpawnInfo.Instigator = GetInstigator();
+ 	SpawnInfo.ObjectFlags |= RF_Transient;	// We never want to save default player pawns into a map
+	SpawnInfo.bDeferConstruction = true;
+	
+ 	UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer);
+	if (APawn* ResultPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo))
+	{
+		if (UKLabPawnComponent* PawnComponent = UKLabPawnComponent::GetFromOwner(ResultPawn))
+		{
+				
+		}
+		ResultPawn->FinishSpawning(SpawnTransform);
+	}
+	
+	UE_LOG(LogLab, Error, TEXT("Spawn default pawn failed."));
+ 	return nullptr;
+}
+
 void AKLabGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
+const UKLabPawnPrimaryData* AKLabGameMode::GetPawnDataFromController(AController* InController)
+{
+	if (IsValid(InController))
+	{
+		// TODO:
+	}
+	return nullptr;
+}
 
 void AKLabGameMode::InitPrimaryAssets()
 {
@@ -59,12 +88,12 @@ void AKLabGameMode::InitPrimaryAssets()
 	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
 	SetPrimaryAssetsToGameState(KLabPrimaryAssetId);
 	
-	/*KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
+	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
 		"[Frame: %lld] KLabGameMode InitPrimaryAssets().\n"
 		"KLab Primary Assets Id Name: %ws"
 		"KLab Primary Assets Id Type Name: %ws"
 		"KLab Primary Assets Source Name: %ws"),
-		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));*/
+		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));
 }
 
 void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName)

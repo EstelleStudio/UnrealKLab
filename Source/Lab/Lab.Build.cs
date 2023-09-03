@@ -23,7 +23,8 @@ public class Lab : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"NetCore", 
-			"PhysicsCore"
+			"PhysicsCore",
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -32,7 +33,8 @@ public class Lab : ModuleRules
 			"ModularGameplay",
 			"DeveloperSettings",
 			"ALS",
-			"GameplayTags",
+			"CommonGame",
+			
 		});
 
 		// Uncomment if you are using Slate UI

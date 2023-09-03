@@ -20,8 +20,101 @@ void UKLabPrimaryAssetManagerComponent::SetCurrentPrimaryAsset(FPrimaryAssetId I
 	check(AssetClass);
 	const UKLabPrimaryDataAsset* PrimaryDataAsset = GetDefault<UKLabPrimaryDataAsset>(AssetClass);
 
-	CurrentPrimaryAsset = PrimaryDataAsset;
+	CurrentPrimaryData = PrimaryDataAsset;
+	StartPrimaryDataLoad();
+}
 
+const UKLabPrimaryDataAsset* UKLabPrimaryAssetManagerComponent::GetPrimaryDataAsset() const
+{
+	check(LoadState == EPrimaryDataLoadState::Loaded);
+	check(CurrentPrimaryData != nullptr);
+	return CurrentPrimaryData;
+}
+
+void UKLabPrimaryAssetManagerComponent::CallOrRegister_PostPrimaryDataLoaded_HighPriority(
+	FKLabPostPrimaryDataLoaded::FDelegate&& Delegate)
+{
+	if (IsPrimaryDataLoaded())
+	{
+		Delegate.Execute(CurrentPrimaryData);
+	}
+	else
+	{
+		PostPrimaryDataLoaded_High.Add(MoveTemp(Delegate));	
+	}
+}
+
+void UKLabPrimaryAssetManagerComponent::CallOrRegister_PostPrimaryDataLoaded(
+	FKLabPostPrimaryDataLoaded::FDelegate&& Delegate)
+{
+	if (IsPrimaryDataLoaded())
+ 	{
+ 		Delegate.Execute(CurrentPrimaryData);
+ 	}
+ 	else
+ 	{
+ 		PostPrimaryDataLoaded.Add(MoveTemp(Delegate));	
+ 	}
+}
+
+void UKLabPrimaryAssetManagerComponent::CallOrRegister_PostPrimaryDataLoaded_LowPriority(
+	FKLabPostPrimaryDataLoaded::FDelegate&& Delegate)
+{
+	if (IsPrimaryDataLoaded())
+    {
+    	Delegate.Execute(CurrentPrimaryData);
+    }
+    else
+    {
+    	PostPrimaryDataLoaded_Low.Add(MoveTemp(Delegate));	
+    }
+}
+
+bool UKLabPrimaryAssetManagerComponent::IsPrimaryDataLoaded()
+{
+	return LoadState == EPrimaryDataLoadState::Loaded && CurrentPrimaryData != nullptr;
+}
+
+void UKLabPrimaryAssetManagerComponent::StartPrimaryDataLoad()
+{
+	check(CurrentPrimaryData != nullptr);
+	check(LoadState == EPrimaryDataLoadState::Unloaded);
+	// TODO: Add Log or Debug Message
+
+	LoadState = EPrimaryDataLoadState::Loading;
+
+	// TODO: Asset Manager for game features
+	
+	// TODO: Bind this to a delegate
+	OnPrimaryDataLoadComplete();
+}
+
+void UKLabPrimaryAssetManagerComponent::OnPrimaryDataLoadComplete()
+{
+	check(LoadState == EPrimaryDataLoadState::Loading);
+	// TODO: Add Log or Debug Message
+
+	// TODO: GameFeature
+
+	PostPrimaryDataLoad();
+}
+
+void UKLabPrimaryAssetManagerComponent::PostPrimaryDataLoad()
+{
+	check(LoadState != EPrimaryDataLoadState::Loaded)
+	// TODO: GameFeature
+
+	LoadState = EPrimaryDataLoadState::Loaded;
+
+	/* Call delegate functions*/
+	PostPrimaryDataLoaded_High.Broadcast(CurrentPrimaryData);
+	PostPrimaryDataLoaded_High.Clear();
+
+	PostPrimaryDataLoaded.Broadcast(CurrentPrimaryData);
+	PostPrimaryDataLoaded.Clear();
+
+	PostPrimaryDataLoaded_Low.Broadcast(CurrentPrimaryData);
+	PostPrimaryDataLoaded_Low.Clear();
 }
 
 

@@ -7,9 +7,26 @@
 #include "Common/KLab.h"
 #include "KLabEditorDebugSystem.generated.h"
 
+USTRUCT()
+struct FKLabUObjectDebugData
+{
+	GENERATED_BODY()
+	FKLabUObjectDebugData () = default;	
+	explicit FKLabUObjectDebugData(UObject* InObj) : ObjectPtr(InObj)
+	{
+		DebugStr = FString::Printf(TEXT("Register frame: %lld\n"), GFrameCounter);
+	}
+
+	FWeakObjectPtr ObjectPtr = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Transient)
+	FString DebugStr;
+};
+
 #if KLAB_EDITOR_DEBUG
 
 #define KLAB_DEBUG_REGISTER() UKLabEditorDebugSystem::GetInstance()->Register(this);
+#define KLAB_DEBUG_UNREGISTER() UKLabEditorDebugSystem::GetInstance()->Unregister(this);
 #define KLAB_DEBUG_ADDSTR(STR) UKLabEditorDebugSystem::GetInstance()->AddString(this, STR);
 
 #else
@@ -37,18 +54,6 @@ public:
 private:
 	static UKLabEditorDebugSystem* Instance;
 	
-#if KLAB_EDITOR_DEBUG
-	struct FKLabUObjectDebugData
-	{
-		explicit FKLabUObjectDebugData(UObject* InObj) : ObjectPtr(InObj)
-		{
-			DebugStr = FString::Printf(TEXT("Register frame: %lld\n"), GFrameCounter);
-		}
-
-		FWeakObjectPtr ObjectPtr = nullptr;
-		FString DebugStr;
-	};
-
+	UPROPERTY(VisibleAnywhere, Transient)
 	TMap<uint32, FKLabUObjectDebugData> UObjectMap;
-#endif
 };

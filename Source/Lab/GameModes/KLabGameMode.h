@@ -7,24 +7,30 @@
 
 #include "KLabGameMode.generated.h"
 
+class UKLabPawnPrimaryData;
+
 UCLASS()
 class LAB_API AKLabGameMode : public AModularGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AKLabGameMode();
 	virtual ~AKLabGameMode() override;
 
+	/* override function */
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	/**/
+	const UKLabPawnPrimaryData* GetPawnDataFromController(AController* InController);
 	
 protected:
-	// Called when the game starts or when spawned
+	/* override function */
 	virtual void BeginPlay() override;
-	
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+
+	/**/
 	void InitPrimaryAssets();
 	
 private:

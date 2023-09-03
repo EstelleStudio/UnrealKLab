@@ -22,14 +22,6 @@
 			]
 		},
 		{
-			"Name": "AnimationLocomotionLibrary",
-			"Enabled": true
-		},
-		{
-			"Name": "AnimationWarping",
-			"Enabled": true
-		},
-		{
 			"Name": "ModularGameplay",
 			"Enabled": true
 		}
