@@ -5,19 +5,24 @@
 
 #include "KLabGameState.h"
 #include "KLabPrimaryAssetManagerComponent.h"
+#include "Character/KLabPawn.h"
 #include "Character/Components/KLabPawnComponent.h"
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
 #include "Development/KLabEditorDebugSystem.h"
 #include "Development/KLabEditorSettings.h"
-#include "Engine/AssetManager.h"
-
+#include "Player/KLabPlayerState.h"
+#include "Character/KLabPawnPrimaryData.h"
+#include "Player/KLabPlayerController.h"
 
 // Sets default values
 AKLabGameMode::AKLabGameMode()
 {
 	KLAB_DEBUG_REGISTER();
 	GameStateClass = AKLabGameState::StaticClass();
+	PlayerControllerClass = AKLabPlayerController::StaticClass();
+	PlayerStateClass = AKLabPlayerState::StaticClass();
+	DefaultPawnClass = AKLabPawn::StaticClass();
 }
 
 AKLabGameMode::~AKLabGameMode()
@@ -57,9 +62,18 @@ APawn* AKLabGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* Ne
 	{
 		if (UKLabPawnComponent* PawnComponent = UKLabPawnComponent::GetFromOwner(ResultPawn))
 		{
-				
+			if (const UKLabPawnPrimaryData* PawnData = GetPawnDataFromController(NewPlayer))
+			{
+				PawnComponent->SetPawnData(PawnData);
+			}
+			else
+			{
+				UE_LOG(LogLab, Error, TEXT("Game mode was unable to set PawnData on the spawned pawn [%s]."), *GetNameSafe(ResultPawn));
+			}
 		}
 		ResultPawn->FinishSpawning(SpawnTransform);
+
+		return ResultPawn;
 	}
 	
 	UE_LOG(LogLab, Error, TEXT("Spawn default pawn failed."));
@@ -73,10 +87,29 @@ void AKLabGameMode::Tick(float DeltaTime)
 
 const UKLabPawnPrimaryData* AKLabGameMode::GetPawnDataFromController(AController* InController)
 {
+	// See if pawn data is already set on the player state
 	if (IsValid(InController))
 	{
-		// TODO:
+		if (const AKLabPlayerState* PS = InController->GetPlayerState<AKLabPlayerState>())
+		{
+			if (const UKLabPawnPrimaryData* PawnData = PS->GetPawnData<UKLabPawnPrimaryData>())
+			{
+				return PawnData;
+			}
+		}
 	}
+		
+	// If not, fall back to the the default for the current experience
+	AKLabGameState* KLabGameState = Cast<AKLabGameState>(GameState);
+	UKLabPrimaryAssetManagerComponent* PrimaryAssetComp = KLabGameState->GetPrimaryAssetComp();
+	check(PrimaryAssetComp)
+
+	if (PrimaryAssetComp->IsPrimaryDataLoaded())
+	{
+		const UKLabPrimaryDataAsset* PrimaryData = PrimaryAssetComp->GetPrimaryDataAsset();
+		return PrimaryData->PawnData;
+	}
+	
 	return nullptr;
 }
 

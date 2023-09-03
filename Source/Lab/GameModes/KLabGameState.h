@@ -17,6 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	AKLabGameState();
 
+	UKLabPrimaryAssetManagerComponent* GetPrimaryAssetComp() const {return PrimaryAssetManager;}
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

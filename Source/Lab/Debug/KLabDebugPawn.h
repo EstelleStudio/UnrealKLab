@@ -13,7 +13,7 @@ class LAB_API AKLabDebugPawn : public AKLabPawn
 
 public:
 	// Sets default values for this pawn's properties
-	AKLabDebugPawn();
+	explicit AKLabDebugPawn(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
