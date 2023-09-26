@@ -3,23 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "KLabNetActor.generated.h"
+#include "KLabNetPawn.generated.h"
 
 class UKLabNetUObject;
 
 UCLASS()
-class LAB_API AKLabNetActor : public AActor
+class LAB_API AKLabNetPawn : public APawn
 {
 	GENERATED_BODY()
-
 public:
-	AKLabNetActor();
+	AKLabNetPawn();
 	friend class UKLabNetUObject;
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-
+   virtual void Tick(float DeltaSeconds) override;
+	
+	UPROPERTY(Replicated)
+	TObjectPtr<UKLabNetUObject> NetObj;
 private:
 	void CreateNetSubObject();
 	void CleanNetSubObject();
@@ -29,8 +32,6 @@ private:
 	void UpdateServer();
 	void ServerRPC();
 	void ClientRPC();
-
-	TObjectPtr<UKLabNetUObject> NetObj;
 	
 	FTimerHandle ServerUpdateTimer;
 	FTimerHandle ServerRPCTimer;

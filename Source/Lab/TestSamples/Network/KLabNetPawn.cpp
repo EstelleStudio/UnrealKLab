@@ -1,12 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "KLabNetActor.h"
+#include "KLabNetPawn.h"
 #include "KLabNetUObject.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
-AKLabNetActor::AKLabNetActor()
+AKLabNetPawn::AKLabNetPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -18,29 +19,33 @@ AKLabNetActor::AKLabNetActor()
 }
 
 // Called when the game starts or when spawned
-void AKLabNetActor::BeginPlay()
+void AKLabNetPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateNetSubObject();
 	StartNetTest();
 }
 
-void AKLabNetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AKLabNetPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	EndNetTest();
 	CleanNetSubObject();
 	Super::EndPlay(EndPlayReason);
 }
 
-void AKLabNetActor::CreateNetSubObject()
+void AKLabNetPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
+void AKLabNetPawn::CreateNetSubObject()
 {
 	CleanNetSubObject();
-
 	NetObj= NewObject<UKLabNetUObject>(this);
 	AddReplicatedSubObject(NetObj);
 }
 
-void AKLabNetActor::CleanNetSubObject()
+void AKLabNetPawn::CleanNetSubObject()
 {
 	if (IsValid(NetObj))
 	{
@@ -48,41 +53,45 @@ void AKLabNetActor::CleanNetSubObject()
 	}
 }
 
-void AKLabNetActor::StartNetTest()
+void AKLabNetPawn::StartNetTest()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		GetWorldTimerManager().SetTimer(ServerUpdateTimer, this, &AKLabNetActor::UpdateServer, RandomValueInterval, true, RandomValueInterval);
-		// GetWorldTimerManager().SetTimer(ServerRPCTimer, this, &AKLabNetActor::ServerRPC, ServerMulticastInterval, true, ServerMulticastInterval);
+		GetWorldTimerManager().SetTimer(ServerUpdateTimer, this, &AKLabNetPawn::UpdateServer, RandomValueInterval, true, RandomValueInterval);
+		GetWorldTimerManager().SetTimer(ServerRPCTimer, this, &AKLabNetPawn::ServerRPC, ServerMulticastInterval, true, ServerMulticastInterval);
 	}
 
-	if (GetLocalRole() < ROLE_Authority)
+	if (GetLocalRole() < ROLE_Authority && IsLocallyControlled())
 	{
-		// GetWorldTimerManager().SetTimer(ClientRPCTimer, this, &AKLabNetActor::ClientRPC, ClientToServerInterval, true, ClientToServerInterval);
+		GetWorldTimerManager().SetTimer(ClientRPCTimer, this, &AKLabNetPawn::ClientRPC, ClientToServerInterval, true, ClientToServerInterval);
 	}
 }
 
-void AKLabNetActor::EndNetTest()
+void AKLabNetPawn::EndNetTest()
 {
 	GetWorldTimerManager().ClearTimer(ServerUpdateTimer);
 	GetWorldTimerManager().ClearTimer(ServerRPCTimer);
 	GetWorldTimerManager().ClearTimer(ClientRPCTimer);
 }
 
-void AKLabNetActor::UpdateServer()
+void AKLabNetPawn::UpdateServer()
 {
 	NetObj->RandomValueOnServer = FMath::Rand();
 	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%lld] Server update random value: %d."), GFrameCounter, NetObj->RandomValueOnServer));
 }
 
-void AKLabNetActor::ServerRPC()
+void AKLabNetPawn::ServerRPC()
 {
 	NetObj->ServerMulticast(GFrameCounter);
 }
 
-void AKLabNetActor::ClientRPC()
+void AKLabNetPawn::ClientRPC()
 {
 	NetObj->ClientToServer(GFrameCounter);
 }
 
-
+void AKLabNetPawn::GetLifetimeReplicatedProps(TArray< class FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ThisClass, NetObj);
+}

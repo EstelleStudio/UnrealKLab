@@ -3,17 +3,15 @@
 
 #include "KLabNetUObject.h"
 
-#include "KLabNetActor.h"
+#include "KLabNetPawn.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 void UKLabNetUObject::GetLifetimeReplicatedProps(TArray< class FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	FDoRepLifetimeParams NetParameters;
-
-	NetParameters.Condition = COND_SkipOwner;
-	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass, RandomValueOnServer, NetParameters);
+	
+	DOREPLIFETIME(ThisClass, RandomValueOnServer);
 }
 
 int32 UKLabNetUObject::GetFunctionCallspace(UFunction* Function, FFrame* Stack)
@@ -41,7 +39,7 @@ bool UKLabNetUObject::CallRemoteFunction(UFunction* Function, void* Parms, FOutP
 
 bool UKLabNetUObject::IsSupportedForNetworking() const
 {
-	return UObject::IsSupportedForNetworking();
+	return true;
 }
 
 AActor* UKLabNetUObject::GetOwnerActor() const

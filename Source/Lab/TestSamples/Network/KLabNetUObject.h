@@ -19,7 +19,8 @@ public:
 	virtual bool IsSupportedForNetworking() const override;
 	virtual AActor* GetOwnerActor() const;
 
-	friend class AKLabNetActor;
+	friend class AKLabNetPawn;
+
 protected:
 	virtual void GetLifetimeReplicatedProps( TArray< class FLifetimeProperty > & OutLifetimeProps ) const override;
 
