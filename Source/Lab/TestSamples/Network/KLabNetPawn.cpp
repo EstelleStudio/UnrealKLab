@@ -57,21 +57,30 @@ void AKLabNetPawn::StartNetTest()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		GetWorldTimerManager().SetTimer(ServerUpdateTimer, this, &AKLabNetPawn::UpdateServer, RandomValueInterval, true, RandomValueInterval);
-		GetWorldTimerManager().SetTimer(ServerRPCTimer, this, &AKLabNetPawn::ServerRPC, ServerMulticastInterval, true, ServerMulticastInterval);
+		GetWorldTimerManager().SetTimer(ReplicatedBytesTestTimer, this, &AKLabNetPawn::ReplicatedBytesTest, ReplicatedBytesTestInterval, true,ReplicatedBytesTestInterval);
+		// GetWorldTimerManager().SetTimer(ServerUpdateTimer, this, &AKLabNetPawn::UpdateServer, RandomValueInterval, true, RandomValueInterval);
+		// GetWorldTimerManager().SetTimer(ServerRPCTimer, this, &AKLabNetPawn::ServerRPC, ServerMulticastInterval, true, ServerMulticastInterval);
 	}
 
-	if (GetLocalRole() < ROLE_Authority && IsLocallyControlled())
-	{
-		GetWorldTimerManager().SetTimer(ClientRPCTimer, this, &AKLabNetPawn::ClientRPC, ClientToServerInterval, true, ClientToServerInterval);
-	}
+	// if (GetLocalRole() < ROLE_Authority && IsLocallyControlled())
+	// {
+		// GetWorldTimerManager().SetTimer(ClientRPCTimer, this, &AKLabNetPawn::ClientRPC, ClientToServerInterval, true, ClientToServerInterval);
+	// }
 }
 
 void AKLabNetPawn::EndNetTest()
 {
-	GetWorldTimerManager().ClearTimer(ServerUpdateTimer);
-	GetWorldTimerManager().ClearTimer(ServerRPCTimer);
-	GetWorldTimerManager().ClearTimer(ClientRPCTimer);
+	GetWorldTimerManager().ClearTimer(ReplicatedBytesTestTimer);
+	// GetWorldTimerManager().ClearTimer(ServerUpdateTimer);
+	// GetWorldTimerManager().ClearTimer(ServerRPCTimer);
+	// GetWorldTimerManager().ClearTimer(ClientRPCTimer);
+}
+
+void AKLabNetPawn::ReplicatedBytesTest()
+{
+	static int Index = 0;
+	NetObj->UpdateReplicatedBytes(Index++);
+	Index = Index > 7 ? 0 : Index;
 }
 
 void AKLabNetPawn::UpdateServer()

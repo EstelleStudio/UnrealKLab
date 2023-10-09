@@ -6,6 +6,21 @@
 #include "UObject/Object.h"
 #include "KLabNetUObject.generated.h"
 
+USTRUCT()
+struct FRepTest8Bytes
+{
+	GENERATED_BODY()
+
+	UPROPERTY() uint8 Byte0;
+	UPROPERTY() uint8 Byte1;
+	UPROPERTY() uint8 Byte2;
+	UPROPERTY() uint8 Byte3;
+	UPROPERTY() uint8 Byte4;
+	UPROPERTY() uint8 Byte5;
+	UPROPERTY() uint8 Byte6;
+	UPROPERTY() uint8 Byte7;
+};
+
 /**
  * 
  */
@@ -40,4 +55,28 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void ServerMulticast(uint64 ServerFrameCounter);
 
+	/**
+	 * Replicated Bytes Test
+	 *
+	 * 1. Array
+	 * 2. UStruct
+	 * 4. 8 Var
+	 */
+
+	void UpdateReplicatedBytes(int Index);
+	
+	UPROPERTY(Replicated)
+	TArray<uint8> ArrayOf8Bytes = {0, 0, 0, 0, 0, 0, 0, 0};
+	
+	UPROPERTY(Replicated)
+	FRepTest8Bytes StructOf8Bytes;
+
+	UPROPERTY(Replicated) uint8 Byte0;
+	UPROPERTY(Replicated) uint8 Byte1;
+	UPROPERTY(Replicated) uint8 Byte2;
+	UPROPERTY(Replicated) uint8 Byte3;
+	UPROPERTY(Replicated) uint8 Byte4;
+	UPROPERTY(Replicated) uint8 Byte5;
+	UPROPERTY(Replicated) uint8 Byte6;
+	UPROPERTY(Replicated) uint8 Byte7;
 };

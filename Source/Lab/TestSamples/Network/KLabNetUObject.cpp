@@ -12,6 +12,17 @@ void UKLabNetUObject::GetLifetimeReplicatedProps(TArray< class FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ThisClass, RandomValueOnServer);
+
+	DOREPLIFETIME(ThisClass, ArrayOf8Bytes);
+	DOREPLIFETIME(ThisClass, StructOf8Bytes);
+	DOREPLIFETIME(ThisClass, Byte0);
+	DOREPLIFETIME(ThisClass, Byte1);
+	DOREPLIFETIME(ThisClass, Byte2);
+	DOREPLIFETIME(ThisClass, Byte3);
+	DOREPLIFETIME(ThisClass, Byte4);
+	DOREPLIFETIME(ThisClass, Byte5);
+	DOREPLIFETIME(ThisClass, Byte6);
+	DOREPLIFETIME(ThisClass, Byte7);
 }
 
 int32 UKLabNetUObject::GetFunctionCallspace(UFunction* Function, FFrame* Stack)
@@ -52,11 +63,24 @@ void UKLabNetUObject::OnRep_RandomValueOnServer()
 	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%lld] Get server random value RepNotify."), GFrameCounter));
 }
 
+void UKLabNetUObject::UpdateReplicatedBytes(int Index)
+{
+	Index = FMath::Clamp(Index, 0, 7);
+	
+	auto UpdateLambda = [Index](uint8* Ptr)
+	{
+		Ptr[Index] = !Ptr[Index];
+	};
+	
+	UpdateLambda(&ArrayOf8Bytes[0]);
+	UpdateLambda(&StructOf8Bytes.Byte0);
+	UpdateLambda(&Byte0);
+}
+
 void UKLabNetUObject::ServerMulticast_Implementation(uint64 ServerFrameCounter)
 {
 	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%lld] Get server multicast RPC, server frame: %lld"), GFrameCounter, ServerFrameCounter));
 }
-
 
 void UKLabNetUObject::ClientToServer_Implementation(uint64 ClientFrameCounter)
 {

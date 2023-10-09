@@ -20,7 +20,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
    virtual void Tick(float DeltaSeconds) override;
-	
+
 	UPROPERTY(Replicated)
 	TObjectPtr<UKLabNetUObject> NetObj;
 private:
@@ -29,13 +29,19 @@ private:
 
 	void StartNetTest();
 	void EndNetTest();
+
+	void ReplicatedBytesTest();
+	
 	void UpdateServer();
 	void ServerRPC();
 	void ClientRPC();
-	
+
+	FTimerHandle ReplicatedBytesTestTimer;
 	FTimerHandle ServerUpdateTimer;
 	FTimerHandle ServerRPCTimer;
 	FTimerHandle ClientRPCTimer;
+
+	float ReplicatedBytesTestInterval = 1.f;
 	float RandomValueInterval = 2.f;
 	float ServerMulticastInterval = 3.f;
 	float ClientToServerInterval = 4.f;
