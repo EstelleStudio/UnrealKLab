@@ -34,6 +34,8 @@ public class Lab : ModuleRules
 			"DeveloperSettings",
 			"ALS",
 			"CommonGame",
+			"Slate",
+			"UMG"
 			
 		});
 
