@@ -3,6 +3,14 @@
 
 #include "KLabActivatableWidgetContainerBase.h"
 
+#include "Widgets/Layout/SSpacer.h"
+#include "Widgets/Layout/SWidgetSwitcher.h"
+
+UKLabActivatableWidgetContainerBase::UKLabActivatableWidgetContainerBase(const FObjectInitializer& Initializer) : Super(Initializer)
+{
+	SetVisibilityInternal(ESlateVisibility::Collapsed);
+}
+
 void UKLabActivatableWidgetContainerBase::RemoveWidget(UKLabActivatableWidget& WidgetToRemove)
 {
 }
@@ -21,11 +29,30 @@ void UKLabActivatableWidgetContainerBase::ClearWidgets()
 {
 }
 
-void UKLabActivatableWidgetContainerBase::SetTransitionDuration(float Duration)
+TSharedRef<SWidget> UKLabActivatableWidgetContainerBase::RebuildWidget()
 {
+	MyOverlay = SNew(SOverlay)
+	+ SOverlay::Slot()
+	[
+		SAssignNew(MySwitcher, SWidgetSwitcher)
+	]
+	+ SOverlay::Slot()
+	[
+		SAssignNew(MyInputGuard, SSpacer)
+		.Visibility(EVisibility::Collapsed)
+	];
+
+	// We always want a 0th slot to be able to animate the first real entry in and out
+	MySwitcher->AddSlot() [SNullWidget::NullWidget];
+	
+	return MyOverlay.ToSharedRef();
 }
 
-float UKLabActivatableWidgetContainerBase::GetTransitionDuration() const
+void UKLabActivatableWidgetContainerBase::ReleaseSlateResources(bool bReleaseChildren)
 {
-	return 0.f;
+	Super::ReleaseSlateResources(bReleaseChildren);
+
+	MyOverlay.Reset();
+	MyInputGuard.Reset();
+	MySwitcher.Reset();	
 }

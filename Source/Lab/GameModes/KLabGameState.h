@@ -9,7 +9,7 @@
 class UKLabPrimaryAssetManagerComponent;
 
 UCLASS()
-class LAB_API AKLabGameState : public AModularGameState
+class LAB_API AKLabGameState : public AModularGameStateBase
 {
 	GENERATED_BODY()
 

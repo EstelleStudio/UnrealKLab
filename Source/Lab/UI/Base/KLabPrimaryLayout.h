@@ -26,7 +26,7 @@ class UKLabActivatableWidgetContainerBase;
 /**
  * 
  */
-UCLASS(meta = (DisableNativeTick))
+UCLASS(Abstract, meta = (DisableNativeTick))
 class LAB_API UKLabPrimaryLayout : public UKLabWidgetBase
 {
 	GENERATED_BODY()

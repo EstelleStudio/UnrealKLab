@@ -35,6 +35,7 @@ public class Lab : ModuleRules
 			"ALS",
 			"CommonGame",
 			"Slate",
+			"SlateCore",
 			"UMG"
 			
 		});

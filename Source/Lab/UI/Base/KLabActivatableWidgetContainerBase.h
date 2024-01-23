@@ -9,7 +9,7 @@
 #include "KLabActivatableWidgetContainerBase.generated.h"
 
 /**
- * 
+ *  refer to common ui.
  */
 UCLASS(Abstract)
 class LAB_API UKLabActivatableWidgetContainerBase : public UWidget
@@ -17,6 +17,7 @@ class LAB_API UKLabActivatableWidgetContainerBase : public UWidget
 	GENERATED_BODY()
 
 public:
+	UKLabActivatableWidgetContainerBase(const FObjectInitializer& Initializer);
 
 	void RemoveWidget(UKLabActivatableWidget& WidgetToRemove);
 
@@ -30,13 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ClearWidgets();
 
-	void SetTransitionDuration(float Duration);
-	float GetTransitionDuration() const;
-
 protected:
-	/** The total duration of a single transition between widgets */
-	UPROPERTY(EditAnywhere)
-	float TransitionDuration = 0.4f;
+	virtual TSharedRef<SWidget> RebuildWidget() override;
+	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 	
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UKLabActivatableWidget>> WidgetList;
@@ -46,6 +43,10 @@ protected:
 
 	UPROPERTY(Transient)
 	FUserWidgetPool GeneratedWidgetsPool;
+
+	TSharedPtr<SOverlay> MyOverlay;
+	TSharedPtr<SSpacer> MyInputGuard;
+	TSharedPtr<SWidgetSwitcher> MySwitcher;
 	
 	/*
 	 * Add Widget Function

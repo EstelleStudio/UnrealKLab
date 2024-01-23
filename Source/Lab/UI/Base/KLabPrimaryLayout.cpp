@@ -13,7 +13,6 @@ void UKLabPrimaryLayout::RegisterLayer(FGameplayTag LayerTag, UKLabActivatableWi
 {
 	if (!IsDesignTime())
 	{
-		LayerWidget->SetTransitionDuration(0.0);
 		Layers.Add(LayerTag, LayerWidget);
 	}
 }
