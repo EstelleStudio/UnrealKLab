@@ -16,4 +16,7 @@ class UKLabAssetManager : public UAssetManager
 
 public:
 	static UKLabAssetManager& Get();
+
+protected:
+	virtual void StartInitialLoading() override;
 };

@@ -74,9 +74,9 @@ void UKLabUISubsystem::NotifyPlayerRemoved(ULocalPlayer* InLocalPlayer)
 {
 	if (UKLabLocalPlayer* LocalPlayer = Cast<UKLabLocalPlayer>(InLocalPlayer))
 	{
+		RemovePrimaryLayoutWidget(LocalPlayer);
 		LocalPlayer->OnPlayerControllerSet.RemoveAll(this);
 	}
-
 }
 
 void UKLabUISubsystem::CreatePrimaryLayoutWidget(ULocalPlayer* InLocalPlayer)

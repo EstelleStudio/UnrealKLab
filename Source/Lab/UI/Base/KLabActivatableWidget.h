@@ -23,7 +23,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DeactivateWidget();
-
+	
+	FSimpleMulticastDelegate& OnActivated() const { return OnActivatedEvent; }
+	FSimpleMulticastDelegate& OnDeactivated() const { return OnDeactivatedEvent; }
+	
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -33,9 +36,23 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	bool bAutoActivate = false;
+
+	UPROPERTY(EditAnywhere,meta = (InlineEditConditionToggle = "ActivatedVisibility"))
+	bool bSetVisibilityOnActivated = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bSetVisibilityOnActivated"))
+	ESlateVisibility ActivatedVisibility = ESlateVisibility::SelfHitTestInvisible;
+
+	UPROPERTY(EditAnywhere, meta = (InlineEditConditionToggle = "DeactivatedVisibility"))
+	bool bSetVisibilityOnDeactivated = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bSetVisibilityOnDeactivated"))
+	ESlateVisibility DeactivatedVisibility = ESlateVisibility::Collapsed;
 	
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	bool bIsActive = false;
-	
+
+	mutable FSimpleMulticastDelegate OnActivatedEvent;
+	mutable FSimpleMulticastDelegate OnDeactivatedEvent;
 };

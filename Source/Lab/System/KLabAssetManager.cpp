@@ -3,6 +3,7 @@
 
 #include "KLabAssetManager.h"
 
+#include "KLabGameplayTags.h"
 #include "Common/KLab.h"
 
 UKLabAssetManager& UKLabAssetManager::Get()
@@ -17,4 +18,10 @@ UKLabAssetManager& UKLabAssetManager::Get()
 	UE_LOG(LogLab, Fatal, TEXT("Invalid AssetManagerClassName in DefaultEngine.ini.  It must be set to KLabAssetManager!"));
 
 	return *NewObject<UKLabAssetManager>();
+}
+
+void UKLabAssetManager::StartInitialLoading()
+{
+	Super::StartInitialLoading();
+	FKLabGameplayTags::Get().InitializeNativeTags();
 }
