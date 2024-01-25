@@ -18,6 +18,7 @@ public:
 	FGameplayTag UITag_Layer_Game;
 	FGameplayTag UITag_Layer_GameMenu;
 	FGameplayTag UITag_Layer_Menu;
+	FGameplayTag UITag_Layer_Debug;
 	FGameplayTag UITag_Layer_Modal;
 	
 	protected:

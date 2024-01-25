@@ -24,6 +24,7 @@ void FKLabGameplayTags::AddAllUITags()
 	AddTag(UITag_Layer_Game, "UI.Layer.Game", "");
 	AddTag(UITag_Layer_GameMenu, "UI.Layer.GameMenu", "");
 	AddTag(UITag_Layer_Menu, "UI.Layer.Menu", "");
+	AddTag(UITag_Layer_Debug, "UI.Layer.Debug", "");
 	AddTag(UITag_Layer_Modal, "UI.Layer.Modal", "");
 }
 
