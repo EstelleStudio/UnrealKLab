@@ -21,17 +21,23 @@ public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	virtual UWorld* GetWorld() const override;
 
+	static UKLabUISubsystem* GetInstance() { return Instance; }
+
+	UKLabPrimaryLayout* GetCurrentPrimaryLayout() const { return CurrentPrimaryLayout; }
+
 protected:
 	virtual void NotifyPlayerAdded(ULocalPlayer* InLocalPlayer);
-    virtual void NotifyPlayerRemoved(ULocalPlayer* InLocalPlayer);
-	
+	virtual void NotifyPlayerRemoved(ULocalPlayer* InLocalPlayer);
+
 private:
 	void CreatePrimaryLayoutWidget(ULocalPlayer* InLocalPlayer);
 	void RemovePrimaryLayoutWidget(ULocalPlayer* InLocalPlayer);
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<UKLabPrimaryLayout> CurrentPrimaryLayout = nullptr;
-	
+
 	UPROPERTY(EditAnywhere)
 	TSoftClassPtr<UKLabPrimaryLayout> LayoutClass;
+
+	static UKLabUISubsystem* Instance;
 };

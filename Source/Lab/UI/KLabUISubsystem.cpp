@@ -10,6 +10,8 @@ namespace KLabUISubsystemHelper
 	constexpr int32 PrimaryLayoutZOrder = 1000;
 }
 
+UKLabUISubsystem* UKLabUISubsystem::Instance = nullptr;
+
 void UKLabUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -25,10 +27,14 @@ void UKLabUISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		GameInstance->OnLocalPlayerAddedEvent.AddUObject(this, &ThisClass::NotifyPlayerAdded);
 		GameInstance->OnLocalPlayerRemovedEvent.AddUObject(this, &ThisClass::NotifyPlayerRemoved);
 	}
+
+	Instance = this;
 }
 
 void UKLabUISubsystem::Deinitialize()
 {
+	Instance = nullptr;
+	
 	Super::Deinitialize();
 }
 
