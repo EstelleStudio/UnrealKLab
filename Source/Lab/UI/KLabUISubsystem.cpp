@@ -123,6 +123,7 @@ void UKLabUISubsystem::RemovePrimaryLayoutWidget(ULocalPlayer* InLocalPlayer)
 			{
 				UE_LOG(LogLab, Log, TEXT("root layout [%s] has been removed from the viewport, but other references to its underlying Slate widget still exist."), *GetNameSafe(InLocalPlayer));
 			}
+			CurrentPrimaryLayout = nullptr;
 		}
 	}
 }
