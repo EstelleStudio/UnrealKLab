@@ -9,16 +9,15 @@
 #include "Character/Components/KLabPawnComponent.h"
 #include "Common/KLab.h"
 #include "GameFramework/GameSession.h"
-#include "Development/KLabEditorDebugSystem.h"
 #include "Development/KLabEditorSettings.h"
 #include "Player/KLabPlayerState.h"
 #include "Character/KLabPawnPrimaryData.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/KLabPlayerController.h"
 
 // Sets default values
 AKLabGameMode::AKLabGameMode()
 {
-	KLAB_DEBUG_REGISTER();
 	GameStateClass = AKLabGameState::StaticClass();
 	PlayerControllerClass = AKLabPlayerController::StaticClass();
 	PlayerStateClass = AKLabPlayerState::StaticClass();
@@ -27,21 +26,12 @@ AKLabGameMode::AKLabGameMode()
 
 AKLabGameMode::~AKLabGameMode()
 {
-	KLAB_DEBUG_UNREGISTER();
 }
 
 void AKLabGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::InitPrimaryAssets);
-	
-	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
-		"[Frame: %lld] KLabGameMode InitGame().\n"
-		"Firstly, GameModeBase spawn GameSession in current world, Then KLabGameMode register a next-tick-called function to initialize PrimaryAssets of this map (Lyra Experience).\n"
-		"Map: %ws\n"
-		"Options: %ws\n"
-		"GameSession Name: %ws\n"),
-		GFrameCounter, *MapName, *Options, *GameSession->SessionName.ToString()));
 }
 
 void AKLabGameMode::BeginPlay()
@@ -158,13 +148,8 @@ void AKLabGameMode::InitPrimaryAssets()
 	
 	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
 	SetPrimaryAssetsToGameState(KLabPrimaryAssetId);
-	
-	KLAB_DEBUG_ADDSTR(FString::Printf(TEXT(
-		"[Frame: %lld] KLabGameMode InitPrimaryAssets().\n"
-		"KLab Primary Assets Id Name: %ws"
-		"KLab Primary Assets Id Type Name: %ws"
-		"KLab Primary Assets Source Name: %ws"),
-		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));
+
+	UE_LOG(LogLab, Log, TEXT("Init Primary Asset %ws (Source: %ws)") , *KLabPrimaryAssetId.ToString(), *KLabPrimaryAssetSource);
 }
 
 bool AKLabGameMode::IsPrimaryDataAssetLoaded() const
@@ -195,13 +180,19 @@ void AKLabGameMode::PostPrimaryDataLoaded(const UKLabPrimaryDataAsset* PrimaryDa
 void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName)
 {
 	//Precedence Order
+	// - URL Options override
 	// - Editor (Developer Settings)
 	// - World Settings
 	// - Default
 
-	UWorld* World = GetWorld();
-
-	if (!OutId.IsValid() && World->IsPlayInEditor())
+	if (!OutId.IsValid() && UGameplayStatics::HasOption(OptionsString, TEXT("KLabPrimaryDataAsset")))
+	{
+		const FString OptionsPrimaryAsset = UGameplayStatics::ParseOption(OptionsString, TEXT("KLabPrimaryDataAsset"));
+		OutId = FPrimaryAssetId(FPrimaryAssetType(UKLabPrimaryDataAsset::StaticClass()->GetFName()), FName(*OptionsPrimaryAsset));
+		OutSourceName = TEXT("OptionsString");
+	}
+	
+	if (!OutId.IsValid() && GetWorld()->IsPlayInEditor())
 	{
 		OutId = GetDefault<UKLabEditorSettings>()->EditorPrimaryAsset;
 		OutSourceName = TEXT("DeveloperSettings");
@@ -235,4 +226,3 @@ void AKLabGameMode::SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAsse
 		UE_LOG(LogLab, Error, TEXT("Lab Primary Data Asset is not valid."));
 	}
 }
-
