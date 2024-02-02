@@ -33,6 +33,7 @@ struct FKLabUObjectDebugData
 
 #define KLAB_DEBUG_REGISTER()
 #define KLAB_DEBUG_ADDSTR(STR)
+#define KLAB_DEBUG_UNREGISTER()
 
 #endif
 

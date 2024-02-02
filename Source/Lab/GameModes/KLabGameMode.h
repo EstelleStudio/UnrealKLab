@@ -8,6 +8,7 @@
 #include "KLabGameMode.generated.h"
 
 class UKLabPawnPrimaryData;
+class UKLabPrimaryDataAsset;
 
 UCLASS()
 class LAB_API AKLabGameMode : public AModularGameModeBase
@@ -28,12 +29,20 @@ public:
 protected:
 	/* override function */
 	virtual void BeginPlay() override;
-	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 
+	virtual void InitGameState() override;
+	
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	
 	/**/
 	void InitPrimaryAssets();
+	bool IsPrimaryDataAssetLoaded() const;
 	
 private:
+	void PostPrimaryDataLoaded(const UKLabPrimaryDataAsset* PrimaryData);
+	
 	void GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName);
 	void SetPrimaryAssetsToGameState(FPrimaryAssetId& KLabPrimaryAssetId);
 };

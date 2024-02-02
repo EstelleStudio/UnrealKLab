@@ -49,8 +49,36 @@ void AKLabGameMode::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AKLabGameMode::InitGameState()
+{
+	Super::InitGameState();
+
+	AKLabGameState* KLabGameState = Cast<AKLabGameState>(GameState);
+	UKLabPrimaryAssetManagerComponent* PrimaryAssetComp = KLabGameState->GetPrimaryAssetComp();
+	check(PrimaryAssetComp);
+
+	PrimaryAssetComp->CallOrRegister_PostPrimaryDataLoaded(FKLabPostPrimaryDataLoaded::FDelegate::CreateUObject(this, &ThisClass::PostPrimaryDataLoaded));
+}
+
+UClass* AKLabGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	// Different from lyra, we only return pawn class of PawnData when InController is a KLab player controller.
+	if (InController->StaticClass()->IsChildOf<AKLabPlayerController>())
+	{
+		if (const UKLabPawnPrimaryData* PawnData = GetPawnDataFromController(InController))
+		{
+			if (PawnData->PawnClass)
+			{
+				return PawnData->PawnClass;
+			}
+		}
+	}
+	
+	return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
 APawn* AKLabGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,
-	const FTransform& SpawnTransform)
+                                                                 const FTransform& SpawnTransform)
 {
 	FActorSpawnParameters SpawnInfo;
  	SpawnInfo.Instigator = GetInstigator();
@@ -78,6 +106,16 @@ APawn* AKLabGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* Ne
 	
 	UE_LOG(LogLab, Error, TEXT("Spawn default pawn failed."));
  	return nullptr;
+}
+
+void AKLabGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	// Delay starting a new player
+	// We will start a new player when primary data asset loaded!
+	if (IsPrimaryDataAssetLoaded())
+	{
+		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	}
 }
 
 void AKLabGameMode::Tick(float DeltaTime)
@@ -127,6 +165,31 @@ void AKLabGameMode::InitPrimaryAssets()
 		"KLab Primary Assets Id Type Name: %ws"
 		"KLab Primary Assets Source Name: %ws"),
 		GFrameCounter, *KLabPrimaryAssetId.PrimaryAssetName.ToString(), *KLabPrimaryAssetId.PrimaryAssetType.GetName().ToString(), *KLabPrimaryAssetSource));
+}
+
+bool AKLabGameMode::IsPrimaryDataAssetLoaded() const
+{
+	check(GameState);
+	AKLabGameState* KLabGameState = Cast<AKLabGameState>(GameState);
+	UKLabPrimaryAssetManagerComponent* PrimaryAssetComp = KLabGameState->GetPrimaryAssetComp();
+	check(PrimaryAssetComp);
+
+	return PrimaryAssetComp->IsPrimaryDataLoaded();
+}
+
+void AKLabGameMode::PostPrimaryDataLoaded(const UKLabPrimaryDataAsset* PrimaryData)
+{
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PC = Cast<APlayerController>(*Iterator);
+		if ((PC != nullptr) && (PC->GetPawn() == nullptr))
+		{
+			if (PlayerCanRestart(PC))
+			{
+				RestartPlayer(PC);
+			}
+		}
+	}	
 }
 
 void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSourceName)

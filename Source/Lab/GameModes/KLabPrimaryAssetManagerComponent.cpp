@@ -79,7 +79,8 @@ void UKLabPrimaryAssetManagerComponent::StartPrimaryDataLoad()
 {
 	check(CurrentPrimaryData != nullptr);
 	check(LoadState == EPrimaryDataLoadState::Unloaded);
-	// TODO: Add Log or Debug Message
+
+	UE_LOG(LogLab, Log, TEXT("[%lld] Primary data of GameState start load, Current primary data is %ws "), GFrameCounter, *CurrentPrimaryData->GetPrimaryAssetId().ToString());
 
 	LoadState = EPrimaryDataLoadState::Loading;
 
@@ -92,7 +93,8 @@ void UKLabPrimaryAssetManagerComponent::StartPrimaryDataLoad()
 void UKLabPrimaryAssetManagerComponent::OnPrimaryDataLoadComplete()
 {
 	check(LoadState == EPrimaryDataLoadState::Loading);
-	// TODO: Add Log or Debug Message
+	
+	UE_LOG(LogLab, Log, TEXT("[%lld] Primary data of GameState load complete, Current primary data is %ws "), GFrameCounter, *CurrentPrimaryData->GetPrimaryAssetId().ToString());
 
 	// TODO: GameFeature
 
