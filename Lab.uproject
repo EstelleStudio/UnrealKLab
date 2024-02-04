@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{9C04C288-43CC-BEF1-3CD4-4A90B01E2785}",
+	"EngineAssociation": "{774A62B3-4354-944B-AEEC-8CA34CB4FD1F}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -23,6 +23,14 @@
 		},
 		{
 			"Name": "ModularGameplay",
+			"Enabled": true
+		},
+		{
+			"Name": "GameFeatures",
+			"Enabled": true
+		},
+		{
+			"Name": "KLabDistributionSample",
 			"Enabled": true
 		}
 	]
