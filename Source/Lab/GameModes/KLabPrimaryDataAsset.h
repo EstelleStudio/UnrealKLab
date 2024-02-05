@@ -7,6 +7,7 @@
 #include "KLabPrimaryDataAsset.generated.h"
 
 class UKLabPawnPrimaryData;
+class UGameFeatureAction;
 /**
  * 
  */
@@ -16,7 +17,26 @@ class LAB_API UKLabPrimaryDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+
+#if WITH_EDITOR
+	virtual EDataValidationResult IsDataValid(TArray<FText>& ValidationErrors) override;
+#endif
+
+#if WITH_EDITORONLY_DATA
+	virtual void UpdateAssetBundleData() override;
+#endif
+	
+public:
+	// Default pawn data for player.
 	UPROPERTY(EditDefaultsOnly, Category="KLab|Gameplay")
 	TObjectPtr<UKLabPawnPrimaryData> PawnData;
+
+	// Array of GameFeatures that this primary asset want to active.
+	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
+	TArray<FString> GameFeatures;
+	
+	// Array of actions to perform as this primary asset is loaded/activated/deactivated/unloaded.
+	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
+	TArray<TObjectPtr<UGameFeatureAction>> Actions;
 	
 };

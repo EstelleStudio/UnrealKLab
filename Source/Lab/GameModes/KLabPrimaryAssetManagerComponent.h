@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFeaturePluginOperationResult.h"
 #include "Components/GameStateComponent.h"
 #include "KLabPrimaryAssetManagerComponent.generated.h"
 
@@ -32,12 +33,15 @@ public:
 private:
 	void StartPrimaryDataLoad();
 	void OnPrimaryDataLoadComplete();
+	void OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result);
 	void PostPrimaryDataLoad();
 	
 	enum class EPrimaryDataLoadState
 	{
 		Unloaded,
 		Loading,
+		LoadingGameFeatures,
+		ExecutingActions,
 		Loaded,
 		Deactivating,
 	};
@@ -47,6 +51,9 @@ private:
 	//TODO: Replicated
 	UPROPERTY()
 	TObjectPtr<const UKLabPrimaryDataAsset> CurrentPrimaryData;
+
+	TArray<FString> GameFeaturePluginURLs; // All game features list
+	int32 NumGameFeaturePluginsLoading = 0; // Loading game features num
 
 	/**
 	 * Delegate called when the experience has finished loading just before others
