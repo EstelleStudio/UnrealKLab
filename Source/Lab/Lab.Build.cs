@@ -36,8 +36,9 @@ public class Lab : ModuleRules
 			"CommonGame",
 			"Slate",
 			"SlateCore",
-			"UMG"
-			
+			"UMG",
+			"GameFeatures",
+			"UIExtension"
 		});
 
 		// Uncomment if you are using Slate UI

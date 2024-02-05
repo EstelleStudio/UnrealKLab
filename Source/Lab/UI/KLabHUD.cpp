@@ -3,12 +3,9 @@
 
 #include "KLabHUD.h"
 
-
-AKLabHUD::AKLabHUD()
+AKLabHUD::AKLabHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	PrimaryActorTick.bCanEverTick = true;
-
-	
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 void AKLabHUD::BeginPlay()

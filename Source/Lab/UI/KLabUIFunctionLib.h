@@ -16,7 +16,8 @@ class LAB_API UKLabUIFunctionLib : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+public:
 	UFUNCTION(BlueprintCallable)
-	static bool PushWidgetToLayerForPlayer(UPARAM(meta = (AllowAbstract = false)) TSoftClassPtr<UKLabActivatableWidget> WidgetClass,
+	static UKLabActivatableWidget* PushWidgetToLayerForPlayer(UPARAM(meta = (AllowAbstract = false)) TSubclassOf<UKLabActivatableWidget> WidgetClass,
 		UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerName);
 };

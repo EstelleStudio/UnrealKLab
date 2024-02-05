@@ -12,7 +12,7 @@ class LAB_API AKLabHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	AKLabHUD();
+	AKLabHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	virtual void BeginPlay() override;

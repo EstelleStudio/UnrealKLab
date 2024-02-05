@@ -32,6 +32,10 @@
 		{
 			"Name": "KLabDistributionSample",
 			"Enabled": true
+		},
+		{
+			"Name": "UIExtension",
+			"Enabled": true
 		}
 	]
 }
