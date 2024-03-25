@@ -149,7 +149,7 @@ void AKLabGameMode::InitPrimaryAssets()
 	GetPrimaryAssetID(KLabPrimaryAssetId, KLabPrimaryAssetSource);
 	SetPrimaryAssetsToGameState(KLabPrimaryAssetId);
 
-	UE_LOG(LogLab, Log, TEXT("Init Primary Asset %ws (Source: %ws)") , *KLabPrimaryAssetId.ToString(), *KLabPrimaryAssetSource);
+	UE_LOG(LogLab, Log, TEXT("[%lld]Init Primary Asset %ws (Source: %ws)"), GFrameCounter, *KLabPrimaryAssetId.ToString(), *KLabPrimaryAssetSource);
 }
 
 bool AKLabGameMode::IsPrimaryDataAssetLoaded() const
@@ -204,6 +204,7 @@ void AKLabGameMode::GetPrimaryAssetID(FPrimaryAssetId& OutId, FString& OutSource
 	{
 	}
 
+	// TODO:
 	// Final fallback to the default experience
 	if (!OutId.IsValid())
 	{

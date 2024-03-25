@@ -36,7 +36,7 @@ EDataValidationResult UKLabPrimaryDataAsset::IsDataValid(TArray<FText>& Validati
 
 	// 2. Check All Actions
 	int32 EntryIndex = 0;
-	for (UGameFeatureAction* Action : Actions)
+	for (UGameFeatureAction* Action : GameFeatureActions)
 	{
 		if (Action)
 		{
@@ -60,7 +60,7 @@ EDataValidationResult UKLabPrimaryDataAsset::IsDataValid(TArray<FText>& Validati
 void UKLabPrimaryDataAsset::UpdateAssetBundleData()
 {
 	Super::UpdateAssetBundleData();
-	for (UGameFeatureAction* Action : Actions)
+	for (UGameFeatureAction* Action : GameFeatureActions)
 	{
 		if (Action)
 		{

@@ -11,14 +11,14 @@ struct FRepTest8Bytes
 {
 	GENERATED_BODY()
 
-	UPROPERTY() uint8 Byte0;
-	UPROPERTY() uint8 Byte1;
-	UPROPERTY() uint8 Byte2;
-	UPROPERTY() uint8 Byte3;
-	UPROPERTY() uint8 Byte4;
-	UPROPERTY() uint8 Byte5;
-	UPROPERTY() uint8 Byte6;
-	UPROPERTY() uint8 Byte7;
+	UPROPERTY() uint8 Byte0 = 0;
+	UPROPERTY() uint8 Byte1 = 0;;
+	UPROPERTY() uint8 Byte2 = 0;;
+	UPROPERTY() uint8 Byte3 = 0;;
+	UPROPERTY() uint8 Byte4 = 0;;
+	UPROPERTY() uint8 Byte5 = 0;;
+	UPROPERTY() uint8 Byte6 = 0;;
+	UPROPERTY() uint8 Byte7 = 0;;
 };
 
 /**
@@ -71,12 +71,12 @@ protected:
 	UPROPERTY(Replicated)
 	FRepTest8Bytes StructOf8Bytes;
 
-	UPROPERTY(Replicated) uint8 Byte0;
-	UPROPERTY(Replicated) uint8 Byte1;
-	UPROPERTY(Replicated) uint8 Byte2;
-	UPROPERTY(Replicated) uint8 Byte3;
-	UPROPERTY(Replicated) uint8 Byte4;
-	UPROPERTY(Replicated) uint8 Byte5;
-	UPROPERTY(Replicated) uint8 Byte6;
-	UPROPERTY(Replicated) uint8 Byte7;
+	UPROPERTY(Replicated) uint8 Byte0 = 0;;
+	UPROPERTY(Replicated) uint8 Byte1 = 0;;
+	UPROPERTY(Replicated) uint8 Byte2 = 0;;
+	UPROPERTY(Replicated) uint8 Byte3 = 0;;
+	UPROPERTY(Replicated) uint8 Byte4 = 0;;
+	UPROPERTY(Replicated) uint8 Byte5 = 0;;
+	UPROPERTY(Replicated) uint8 Byte6 = 0;;
+	UPROPERTY(Replicated) uint8 Byte7 = 0;;
 };

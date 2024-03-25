@@ -37,6 +37,6 @@ public:
 	
 	// Array of actions to perform as this primary asset is loaded/activated/deactivated/unloaded.
 	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
-	TArray<TObjectPtr<UGameFeatureAction>> Actions;
+	TArray<TObjectPtr<UGameFeatureAction>> GameFeatureActions;
 	
 };

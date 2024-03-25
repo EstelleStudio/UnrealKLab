@@ -155,7 +155,7 @@ void UKLabPrimaryAssetManagerComponent::PostPrimaryDataLoad()
 		Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
 	}
 
-	for (UGameFeatureAction* Action : CurrentPrimaryData->Actions)
+	for (UGameFeatureAction* Action : CurrentPrimaryData->GameFeatureActions)
 	{
 		if (Action != nullptr)
 		{
