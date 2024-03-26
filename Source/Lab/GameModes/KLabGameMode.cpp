@@ -14,11 +14,13 @@
 #include "Character/KLabPawnPrimaryData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/KLabPlayerController.h"
+#include "UI/KLabHUD.h"
 
 // Sets default values
 AKLabGameMode::AKLabGameMode()
 {
 	GameStateClass = AKLabGameState::StaticClass();
+	HUDClass = AKLabHUD::StaticClass();
 	PlayerControllerClass = AKLabPlayerController::StaticClass();
 	PlayerStateClass = AKLabPlayerState::StaticClass();
 	DefaultPawnClass = AKLabPawn::StaticClass();

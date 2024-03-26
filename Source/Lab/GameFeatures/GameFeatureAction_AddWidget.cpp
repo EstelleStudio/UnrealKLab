@@ -4,6 +4,7 @@
 #include "GameFeatureAction_AddWidget.h"
 
 #include "GameFeaturesSubsystemSettings.h"
+#include "Common/KLab.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "UI/KLabHUD.h"
 #include "UI/KLabUIFunctionLib.h"
@@ -136,9 +137,18 @@ void UGameFeatureAction_AddWidget::AddWidgets(AActor* Actor, FPerContextData& Ac
 
 		for (const FKLabHUDLayoutRequest& Entry : Layout)
 		{
+			// TODO: figure out why lyra not need to load asset here:
+			if (Entry.LayoutClass.IsNull() || !Entry.LayoutClass.IsValid())
+			{
+				Entry.LayoutClass.LoadSynchronous();
+			}
 			if (TSubclassOf<UKLabActivatableWidget> ConcreteWidgetClass = Entry.LayoutClass.Get())
 			{
 				ActorData.LayoutsAdded.Add(UKLabUIFunctionLib::PushWidgetToLayerForPlayer(ConcreteWidgetClass, Entry.LayerID));
+			}
+			else
+			{
+				UE_LOG(LogLab, Error, TEXT("GameFeatureAction_AddWidget class must be derived from KLabActivatableWidget, Request entry layout class: %ws"), *Entry.LayoutClass.ToString());
 			}
 		}
 

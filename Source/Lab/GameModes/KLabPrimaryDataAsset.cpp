@@ -7,6 +7,10 @@
 
 #define LOCTEXT_NAMESPACE "KLabLoc"
 
+UKLabPrimaryDataAsset::UKLabPrimaryDataAsset()
+{
+}
+
 #if WITH_EDITOR
 EDataValidationResult UKLabPrimaryDataAsset::IsDataValid(TArray<FText>& ValidationErrors)
 {

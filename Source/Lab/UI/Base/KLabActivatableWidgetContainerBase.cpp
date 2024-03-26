@@ -23,7 +23,7 @@ namespace KLabActivatableWidgetContainerHelper
 	}	
 }
 
-UKLabActivatableWidgetContainerBase::UKLabActivatableWidgetContainerBase(const FObjectInitializer& Initializer) : Super(Initializer)
+UKLabActivatableWidgetContainerBase::UKLabActivatableWidgetContainerBase(const FObjectInitializer& Initializer) : Super(Initializer) , GeneratedWidgetsPool(*this)
 {
 	SetVisibilityInternal(ESlateVisibility::Collapsed);
 }

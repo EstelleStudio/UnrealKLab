@@ -17,6 +17,7 @@ class LAB_API UKLabPrimaryDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+	UKLabPrimaryDataAsset();
 
 #if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(TArray<FText>& ValidationErrors) override;
@@ -36,7 +37,7 @@ public:
 	TArray<FString> GameFeatures;
 	
 	// Array of actions to perform as this primary asset is loaded/activated/deactivated/unloaded.
-	UPROPERTY(EditDefaultsOnly, Category = "KLab|Gameplay")
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "KLab|Gameplay")
 	TArray<TObjectPtr<UGameFeatureAction>> GameFeatureActions;
 	
 };

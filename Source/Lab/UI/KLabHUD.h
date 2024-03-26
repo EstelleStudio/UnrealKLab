@@ -15,8 +15,12 @@ public:
 	AKLabHUD(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
+	virtual void PreInitializeComponents() override;
+	
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 public:
 	virtual void Tick(float DeltaTime) override;
 };
